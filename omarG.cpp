@@ -34,6 +34,7 @@ typedef Flt	Matrix[4][4];
 //constants
 const float timeslice = 1.0f;
 const float gravity = -0.2f;
+bool flip = false;
 #define ALPHA 1
 
 
@@ -349,7 +350,7 @@ void checkMouse(XEvent *e)
 }
 
 int checkKeys(XEvent *e)
-{
+{      
 	//keyboard input?
 	static int shift=0;
 	if (e->type != KeyRelease && e->type != KeyPress)
@@ -368,13 +369,14 @@ int checkKeys(XEvent *e)
 	switch (key) {
 		case XK_w:
 			timers.recordTime(&timers.walkTime);
-			g.walk ^= 1;
+			g.walk ^= 0;
 			break;
 		case XK_Left:
-			
+		        flip = true;	
 			break;
 		case XK_Right:
-	 		break;
+	 		flip = false;
+			break;
 		case XK_Up:
 			break;
 		case XK_Down:
@@ -492,10 +494,10 @@ void render(void)
 	float tx = (float)ix / 4.0;
 	float ty = (float)iy / 1.0;
 	glBegin(GL_QUADS);
-		glTexCoord2f(tx,      ty+1.0); glVertex2i(cx-w, cy-h);
-		glTexCoord2f(tx,      ty);    glVertex2i(cx-w, cy+h);
-		glTexCoord2f(tx+.220, ty);    glVertex2i(cx+w, cy+h);
-		glTexCoord2f(tx+.220, ty+1.0); glVertex2i(cx+w, cy-h);
+		glTexCoord2f(tx,      ty+1.0); glVertex2i(flip ? cx+w: cx-w, cy-h);
+		glTexCoord2f(tx,      ty);    glVertex2i(flip ? cx+w: cx-w, cy+h);
+		glTexCoord2f(tx+.220, ty);    glVertex2i(flip ? cx-w: cx+w, cy+h);
+		glTexCoord2f(tx+.220, ty+1.0); glVertex2i(flip ? cx-w: cx+w, cy-h);
 	glEnd();
 	glPopMatrix();
 	glBindTexture(GL_TEXTURE_2D, 0);
