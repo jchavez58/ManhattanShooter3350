@@ -36,6 +36,7 @@ const float timeslice = 1.0f;
 const float gravity = -0.2f;
 bool flip = false;
 #define ALPHA 1
+void displayGameName(Rect *r);
 
 
 class Image {
@@ -507,6 +508,7 @@ void render(void)
 	r.bot = g.yres - 20;
 	r.left = 10;
 	r.center = 0;
+	displayGameName(&r);
 	ggprint8b(&r, 16, c, "W   Walk cycle");
 	ggprint8b(&r, 16, c, "+   faster");
 	ggprint8b(&r, 16, c, "-   slower");
