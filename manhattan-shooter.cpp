@@ -85,8 +85,6 @@ public:
 };
 Image img[] = {"images/walk_left.png", "images/walk_right.png"};
       
-
-
 //-----------------------------------------------------------------------------
 //Setup timers
 class Timers {
@@ -438,6 +436,8 @@ void physics(void)
 	}
 }
 
+
+
 void render(void)
 {
 	Rect r;
@@ -515,6 +515,7 @@ void render(void)
 	ggprint8b(&r, 16, c, "left arrow  <- walk left");
 	ggprint8b(&r, 16, c, "frame: %i", g.walkFrame);
 	
+	
 	//Names of Group members lab5
 	extern void displayGameName (int x, int y, const char* name);
 	extern void displayName (const char* name,int x , int y);
@@ -522,6 +523,9 @@ void render(void)
         displayName(200, 200, 256, 0, 0, "Dirk Duclos");
 	displayName("Omar Gonzalez", 100, 100);	
 	displayGameName (300, 50, "Marcel Furdui");
+	//Function to draw box
+	extern void drawShape();
+        drawShape();	
 }
 
 
