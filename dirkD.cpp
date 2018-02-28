@@ -2,17 +2,6 @@
 //Framework used: Asteroids
 
 #include"fonts.h"
-#include <iostream>
-#include <cstdlib>
-#include <cstring>
-using namespace std;
-#include <unistd.h>
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <X11/keysym.h>
-#include <GL/glx.h>
 
 //Function to convert RGB value to hex
 unsigned long createRGB(int r, int g, int b)
