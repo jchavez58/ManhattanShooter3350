@@ -9,6 +9,7 @@ using namespace std;
 
 
 void displayGameName (int x, int y, const char* name) {
+
 	unsigned int c = 0x00ffff44;
 
 	Rect r;

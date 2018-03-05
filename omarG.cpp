@@ -1,4 +1,8 @@
+//Author: Omar Gonzalez
+//Date: 03/05/2018
+//Fiel contains code for sprite animations and texture mapping
 #include"fonts.h"
+
 void displayName (const char* name, int x, int y) {
     //Object that handles rendering of text
     Rect r;

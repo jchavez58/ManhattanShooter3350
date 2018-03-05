@@ -23,6 +23,7 @@ Tasks Assigned:
 // vector
 struct Vec {
 	float x, y, z;
+        
 };
 
 // make an object to check for colission
@@ -64,8 +65,11 @@ void displayName(int x, int y, float r, float g, float b, const char *text)
 void drawShape()
 {
         Shape s;
-//	s.left = 200;
-//	s.bottom = 200;
+	s.center.x=0;
+        s.center.y=0;
+        s.center.z=0;
+ 	//s.left = 200;
+	//s.bottom = 200;
 	glColor3ub(255,0,0);
 	glPushMatrix();
 	glTranslatef(s.center.x, s.center.y, s.center.z);
