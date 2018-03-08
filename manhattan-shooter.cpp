@@ -485,7 +485,9 @@ void render(void)
 	glColor3f(1.0, 1.0, 1.0);
 	glBindTexture(GL_TEXTURE_2D, g.walkTexture);
 	//
-	glEnable(GL_ALPHA_TEST);
+       
+
+        glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER, 0.0f);
 	glColor4ub(255,255,255,255);
 	int ix = g.walkFrame % 4;
@@ -503,6 +505,7 @@ void render(void)
 	glPopMatrix();
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_ALPHA_TEST);
+
 	//
 	unsigned int c = 0x00ffff44;
 	r.bot = g.yres - 20;
@@ -516,6 +519,8 @@ void render(void)
 	ggprint8b(&r, 16, c, "frame: %i", g.walkFrame);
 	
 	
+
+	
 	//Names of Group members lab5
 	extern void displayGameName (int x, int y, const char* name);
 	extern void displayName (const char* name,int x , int y);
@@ -525,7 +530,14 @@ void render(void)
 	displayGameName (300, 50, "Marcel Furdui");
 	//Function to draw box
 	extern void drawShape();
+<<<<<<< HEAD
 	drawShape();
+=======
+        drawShape();
+
+        extern void draw();
+         draw();	
+>>>>>>> 53242b033508e94c0b99a0f8724fc9291d939c43
 }
 
 
