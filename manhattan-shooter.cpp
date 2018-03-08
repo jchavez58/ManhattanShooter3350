@@ -525,7 +525,7 @@ void render(void)
 	displayGameName (300, 50, "Marcel Furdui");
 	//Function to draw box
 	extern void drawShape();
-        drawShape();	
+	drawShape();
 }
 
 
