@@ -19,6 +19,17 @@ Tasks Assigned:
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 #include <GL/glx.h>
+#include <ctime>
+#include <sstream>
+
+
+const double oobillion = 1.0 / 1e9;
+double timeDiff(struct timespec *start, struct timespec *end)
+{
+	//return the difference in two times.
+	return (double)(end->tv_sec - start->tv_sec ) +
+		(double)(end->tv_nsec - start->tv_nsec) * oobillion;
+}
 
 // vector
 struct Vec {
@@ -32,6 +43,7 @@ struct Shape {
         float width, height;
 	float radius;
 	Vec center;
+	struct timespec end;
 };
 
 
@@ -45,6 +57,7 @@ unsigned long createRGB(int r, int g, int b)
 //Function to display name on screen
 void displayName(int x, int y, float r, float g, float b, const char *text)
 {
+
     // Clears screen of asteroids program objects (ship, asteroids, etc)
     //glClear(GL_COLOR_BUFFER_BIT);
     
@@ -63,8 +76,10 @@ void displayName(int x, int y, float r, float g, float b, const char *text)
 //Draw objects
 
 void drawShape()
-{
-        Shape s;
+{       
+        struct timespec start;
+	clock_gettime(CLOCK_REALTIME, &start);
+	Shape s;
 	s.center.x=0;
         s.center.y=0;
         s.center.z=0;
@@ -82,4 +97,21 @@ void drawShape()
 		glVertex2i( w, -h);
 	glEnd();
 	glPopMatrix();
+	struct timespec end;
+	clock_gettime(CLOCK_REALTIME, &end);
+	static double runningTime = timeDiff(&start, &end);
+	std::stringstream ss;
+	ss.precision(9);
+	ss << std::fixed << runningTime;
+	const char* str = ss.str().c_str();
+	// Make a new box to store text
+        Rect r3;
+            
+        // Location of text on screen
+        r3.bot = 100;
+        r3.left = 300;
+	ggprint16(&r3, 20, 0x00fff00, str);
+
+
 }
+
