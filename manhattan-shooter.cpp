@@ -38,6 +38,7 @@ bool flip = false;
 #define ALPHA 1
 extern void draw();
 extern void draw2();
+extern void TimeFunc();
 class Image {
 	public:
 		int width, height;
@@ -554,8 +555,9 @@ void render(void)
 	//Optimized Function 
 	draw2();
 
-
-
+        //Amir
+	TimeFunc();
+       
     extern void timeCount();
 	timeCount();
 }
