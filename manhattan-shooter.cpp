@@ -350,7 +350,9 @@ void checkMouse(XEvent *e)
 
 int checkKeys(XEvent *e)
 {      
-	//keyboard input?
+	//keyboard input
+
+
 	static int shift=0;
 	if (e->type != KeyRelease && e->type != KeyPress)
 		return 0;
@@ -441,6 +443,8 @@ void physics(void)
 void render(void)
 {
 	Rect r;
+	
+	
 	//Clear the screen
 	glClearColor(0.1, 0.1, 0.1, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -522,12 +526,14 @@ void render(void)
 
 	
 	//Names of Group members lab5
-	extern void displayGameName (int x, int y, const char* name);
+	//extern void displayTimeFunc(int x, int y, double (&x)(double));
+	extern void displayGameName(int x, int y, const char* name);
 	extern void displayName (const char* name,int x , int y);
 	extern void displayName(int x, int y, float r, float g, float b, const char *text);
         displayName(200, 200, 256, 0, 0, "Dirk Duclos");
 	displayName("Omar Gonzalez", 100, 100);	
-	displayGameName (300, 50, "Marcel Furdui");
+	displayGameName(300, 50, "Marcel Furdui");
+	//displayTimeFunc(300, 50, &calc());
 	//Function to draw box
 	extern void drawShape();
 
@@ -538,6 +544,9 @@ void render(void)
         extern void draw();
          draw();	
 
+
+    extern void timeCount();
+	timeCount();
 }
 
 
