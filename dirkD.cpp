@@ -24,12 +24,7 @@ Tasks Assigned:
 
 
 const double oobillion = 1.0 / 1e9;
-double timeDiff(struct timespec *start, struct timespec *end)
-{
-	//return the difference in two times.
-	return (double)(end->tv_sec - start->tv_sec ) +
-		(double)(end->tv_nsec - start->tv_nsec) * oobillion;
-}
+extern double timeDiff(struct timespec *start, struct timespec *end);
 
 // vector
 struct Vec {

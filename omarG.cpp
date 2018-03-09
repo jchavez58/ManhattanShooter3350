@@ -38,6 +38,8 @@ void draw()
     glVertex2f(320, 250);
     glEnd();
     struct timespec end;
+    
+
     clock_gettime(CLOCK_REALTIME, &end);
     static double time =  timeDiff(&start, &end);
     glPopMatrix(); 
