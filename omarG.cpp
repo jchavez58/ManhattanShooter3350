@@ -82,7 +82,7 @@ void draw2()
 	{ 
 		int total = (div & res);
 		total = (total & 12);
-		total = (total / 100);
+		total = (total & 100);
 	} 
 	
 	clock_gettime(CLOCK_REALTIME, &end);
