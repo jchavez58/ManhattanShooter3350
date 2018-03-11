@@ -49,6 +49,7 @@ unsigned long createRGB(int r, int g, int b)
     return ((r & 0xff) << 16) + ((g & 0xff) << 8) + (b & 0xff);
 }
 
+
 //Function to display name on screen
 void displayName(int x, int y, float r, float g, float b, const char *text)
 {
@@ -68,23 +69,19 @@ void displayName(int x, int y, float r, float g, float b, const char *text)
     ggprint16(&r2, 16, hexrgb, text);
 }
 
+
 //Draw objects
 
-void drawShape()
+void drawShape(int x, int y)
 {       
-        struct timespec start;
-	clock_gettime(CLOCK_REALTIME, &start);
-	Shape s;
-	s.center.x=0;
-        s.center.y=0;
+        Shape s;
+        //s.center.y=0;
         s.center.z=0;
- 	//s.left = 200;
-	//s.bottom = 200;
 	glColor3ub(255,0,0);
 	glPushMatrix();
-	glTranslatef(s.center.x, s.center.y, s.center.z);
+	glTranslatef(x, y, s.center.z);
 	float w = 100;
-	float h = 20;
+	float h = 40;
 	glBegin(GL_QUADS);
 		glVertex2i(-w, -h);
 		glVertex2i(-w,  h);
@@ -92,21 +89,6 @@ void drawShape()
 		glVertex2i( w, -h);
 	glEnd();
 	glPopMatrix();
-	struct timespec end;
-	clock_gettime(CLOCK_REALTIME, &end);
-	static double runningTime = timeDiff(&start, &end);
-	std::stringstream ss;
-	ss.precision(9);
-	ss << std::fixed << runningTime;
-	const char* str = ss.str().c_str();
-	// Make a new box to store text
-        Rect r3;
-            
-        // Location of text on screen
-        r3.bot = 100;
-        r3.left = 300;
-	ggprint16(&r3, 20, 0x00fff00, str);
-
 
 }
 

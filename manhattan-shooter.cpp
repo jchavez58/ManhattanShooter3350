@@ -535,31 +535,35 @@ void render(void)
 	//Names of Group members lab5
 	//extern void displayTimeFunc(int x, int y, double (&x)(double));
 	extern void displayGameName(int x, int y, const char* name);
-	extern void displayName (const char* name,int x , int y);
+	/*extern void displayName (const char* name,int x , int y);
 	extern void displayName(int x, int y, float r, float g, float b, const char *text);
 	displayName(200, 200, 256, 0, 0, "Dirk Duclos");
 	displayName("Omar Gonzalez", 100, 100);	
 	displayGameName(300, 50, "Marcel Furdui");
 	//displayTimeFunc(300, 50, &calc());
-	//Function to draw box
-	extern void drawShape();
+	*/
+        
+        // Dirk Duclos
+        //Function to draw box for colission detection
+	extern void drawShape(int, int);
 
-	drawShape();
+        
+        drawShape(cx+200, cy);
 
-	drawShape();
 
 	//Omar Gonzalez
 	//Profiling Function
 	//First test
-	draw();
+	/*draw();
 	//Optimized Function 
 	draw2();
-
+        */
         //Amir
-	TimeFunc();
+	/*TimeFunc();
        
-    extern void timeCount();
+        extern void timeCount();
 	timeCount();
+        */
 }
 
 
