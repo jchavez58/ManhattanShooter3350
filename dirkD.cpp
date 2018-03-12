@@ -1,12 +1,8 @@
 /* Author: Dirk Duclos
 
-
-
 Tasks Assigned:
-  1. Basic AI for mafia
-  2. Colission detection
-
-
+  1. Colission detection
+  2. Basic AI for mafia
 
 */
 #include"fonts.h"
@@ -22,7 +18,6 @@ Tasks Assigned:
 #include <ctime>
 #include <sstream>
 
-
 const double oobillion = 1.0 / 1e9;
 extern double timeDiff(struct timespec *start, struct timespec *end);
 
@@ -34,14 +29,11 @@ struct Vec {
 
 // make an object to check for colission
 struct Shape {
-	//int left,right,top,bottom;
         float width, height;
 	float radius;
 	Vec center;
 	struct timespec end;
 };
-
-
 
 //Function to convert RGB value to hex
 unsigned long createRGB(int r, int g, int b)
@@ -49,14 +41,9 @@ unsigned long createRGB(int r, int g, int b)
     return ((r & 0xff) << 16) + ((g & 0xff) << 8) + (b & 0xff);
 }
 
-
 //Function to display name on screen
 void displayName(int x, int y, float r, float g, float b, const char *text)
 {
-
-    // Clears screen of asteroids program objects (ship, asteroids, etc)
-    //glClear(GL_COLOR_BUFFER_BIT);
-    
     // Make a new box to store text
     Rect r2;
     
@@ -71,24 +58,31 @@ void displayName(int x, int y, float r, float g, float b, const char *text)
 
 
 //Draw objects
-
 void drawShape(int x, int y)
 {       
-        Shape s;
-        //s.center.y=0;
-        s.center.z=0;
-	glColor3ub(255,0,0);
-	glPushMatrix();
-	glTranslatef(x, y, s.center.z);
-	float w = 100;
-	float h = 40;
-	glBegin(GL_QUADS);
-		glVertex2i(-w, -h);
-		glVertex2i(-w,  h);
-		glVertex2i( w,  h);
-		glVertex2i( w, -h);
-	glEnd();
-	glPopMatrix();
-
+    Shape s;
+    s.center.z=0;
+    glColor3ub(255,0,0);
+    glPushMatrix();
+    glTranslatef(x, y, s.center.z);
+    float w = 100;
+    float h = 40;
+    glBegin(GL_QUADS);
+        glVertex2i(-w, -h);
+        glVertex2i(-w,  h);
+        glVertex2i( w,  h);
+        glVertex2i( w, -h);
+    glEnd();
+    glPopMatrix();
 }
 
+//Check for colission
+void detectColission()
+{
+
+
+
+
+
+
+}

@@ -127,7 +127,7 @@ class Global {
 			walkFrame=0;
 			delay = 0.1;
 			for (int i=0; i<20; i++) {
-				box[i][0] = rnd() * xres;
+                                box[i][0] = rnd() * xres;
 				box[i][1] = rnd() * (yres-220) + 220.0;
 				box[i][2] = 0.0;
 			}
@@ -427,17 +427,23 @@ void physics(void)
 		if (timeSpan > g.delay) {
 			//advance
 			++g.walkFrame;
-			if (g.walkFrame >= 16)
+			
+                        //Dirk Duclos
+                        //With each frame, update x position of walk frame 
+                        //Need to change walk frame to be just image
+                        g.xres += 5;
+
+                        if (g.walkFrame >= 16)
 				g.walkFrame -= 16;
 			timers.recordTime(&timers.walkTime);
 
 
 		}
 		for (int i=0; i<20; i++) {
-			g.box[i][0] -= 2.0 * (0.05 / g.delay);
-			if (g.box[i][0] < -10.0)
-				g.box[i][0] += g.xres + 10.0;
-
+		//	g.box[i][0] -= 2.0 * (0.05 / g.delay);
+		//	if (g.box[i][0] < -10.0) 
+		//		g.box[i][0] += g.xres + 10.0;
+                        
 		}
 	}
 }
@@ -477,7 +483,7 @@ void render(void)
 	//show boxes as background
 	for (int i=0; i<20; i++) {
 		glPushMatrix();
-		glTranslated(g.box[i][0],g.box[i][1],g.box[i][2]);
+	//	glTranslated(g.box[i][0],g.box[i][1],g.box[i][2]);
 		glColor3f(0.2, 0.2, 0.2);
 		glBegin(GL_QUADS);
 		glVertex2i( 0,  0);
@@ -530,8 +536,6 @@ void render(void)
 	ggprint8b(&r, 16, c, "frame: %i", g.walkFrame);
 
 
-
-
 	//Names of Group members lab5
 	//extern void displayTimeFunc(int x, int y, double (&x)(double));
 	extern void displayGameName(int x, int y, const char* name);
@@ -548,7 +552,7 @@ void render(void)
 	extern void drawShape(int, int);
 
         
-        drawShape(cx+200, cy);
+        drawShape(cx+200, cy+150);
 
 
 	//Omar Gonzalez
