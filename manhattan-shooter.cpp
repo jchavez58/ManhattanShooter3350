@@ -18,6 +18,7 @@
 #include <GL/glx.h>
 #include "fonts.h"
 
+
 //defined types
 typedef double Flt;
 typedef double Vec[3];

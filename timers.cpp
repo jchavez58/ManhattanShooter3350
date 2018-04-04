@@ -28,5 +28,3 @@ void timeCopy(struct timespec *dest, struct timespec *source)
 	memcpy(dest, source, sizeof(struct timespec));
 }
 //-----------------------------------------------------------------------------
-
-
