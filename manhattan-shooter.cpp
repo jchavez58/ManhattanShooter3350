@@ -1,7 +1,7 @@
 //3350
 //program: walk.cpp
 //author:  Gordon Griesel
-// Modified By : Omar Gonzalez
+//Modified By : Omar Gonzalez
 //date:  02/24/2018
 //
 //Walk cycle using a sprite sheet.
@@ -39,6 +39,7 @@ bool flip = false;
 extern void draw();
 extern void draw2();
 extern void TimeFunc();
+//extern setBackground();
 class Image {
 	public:
 		int width, height;
@@ -71,8 +72,8 @@ class Image {
 				sscanf(line, "%i %i", &width, &height);
 				fgets(line, 200, fpi);
 				//get pixel data
-				int n = width * height * 3;			
-				data = new unsigned char[n];			
+				int n = width * height * 3;
+				data = new unsigned char[n];
 				for (int i=0; i<n; i++)
 					data[i] = fgetc(fpi);
 				fclose(fpi);
@@ -127,7 +128,7 @@ class Global {
 			walkFrame=0;
 			delay = 0.1;
 			for (int i=0; i<20; i++) {
-                                box[i][0] = rnd() * xres;
+        box[i][0] = rnd() * xres;
 				box[i][1] = rnd() * (yres-220) + 220.0;
 				box[i][2] = 0.0;
 			}
@@ -154,7 +155,8 @@ class X11_wrapper {
 			if (vi == NULL) {
 				printf("\n\tno appropriate visual found\n\n");
 				exit(EXIT_FAILURE);
-			} 
+			}
+
 			Colormap cmap = XCreateColormap(dpy, root, vi->visual, AllocNone);
 			swa.colormap = cmap;
 			swa.event_mask = ExposureMask | KeyPressMask | KeyReleaseMask |
@@ -312,7 +314,7 @@ void initOpengl(void)
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 	//
 	//must build a new set of data...
-	unsigned char *walkData = buildAlphaData(&img[0]);	
+	unsigned char *walkData = buildAlphaData(&img[0]);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
 			GL_RGBA, GL_UNSIGNED_BYTE, walkData);
 	//free(walkData);
@@ -350,7 +352,7 @@ void checkMouse(XEvent *e)
 }
 
 int checkKeys(XEvent *e)
-{      
+{
 	//keyboard input
 
 
@@ -374,15 +376,18 @@ int checkKeys(XEvent *e)
 			g.walk ^= 1;
 			break;
 		case XK_Left:
-			flip = true;	
-			g.xres -= 5;
+			flip = true;
+			//g.xres -= 5;
+
 			break;
 		case XK_Right:
 			flip = false;
 			break;
 		case XK_Up:
+
 			break;
 		case XK_Down:
+
 			break;
 		case XK_equal:
 			g.delay -= 0.005;
@@ -428,13 +433,13 @@ void physics(void)
 		if (timeSpan > g.delay) {
 			//advance
 			++g.walkFrame;
-			
-                        //Dirk Duclos
-                        //With each frame, update x position of walk frame 
-                        //Need to change walk frame to be just image
-                        g.xres += 5;
 
-                        if (g.walkFrame >= 16)
+                        //Dirk Duclos
+                        //With each frame, update x position of walk frame
+                        //Need to change walk frame to be just image
+      g.xres += 5;
+
+    if (g.walkFrame >= 16)
 				g.walkFrame -= 16;
 			timers.recordTime(&timers.walkTime);
 
@@ -442,9 +447,9 @@ void physics(void)
 		}
 		for (int i=0; i<20; i++) {
 		//	g.box[i][0] -= 2.0 * (0.05 / g.delay);
-		//	if (g.box[i][0] < -10.0) 
+		//	if (g.box[i][0] < -10.0)
 		//		g.box[i][0] += g.xres + 10.0;
-                        
+
 		}
 	}
 }
@@ -455,7 +460,7 @@ void render(void)
 {
 	Rect r;
 
-	
+
 	//Clear the screen
 	glClearColor(0.1, 0.1, 0.1, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -497,12 +502,14 @@ void render(void)
 
 
 	}
+
+//walk frame.
 	float h = 40.0;
 	float w = h * 0.5; //0.5 h = 50.0
 	glPushMatrix();
 	glColor3f(1.0, 1.0, 1.0);
 	glBindTexture(GL_TEXTURE_2D, g.walkTexture);
-  	//sprite
+
 
 
 	glEnable(GL_ALPHA_TEST);
@@ -518,10 +525,10 @@ void render(void)
 	glTexCoord2f(tx,      ty+1.0); glVertex2i(flip ? cx+w: cx-w, cy-h);
 	glTexCoord2f(tx,      ty);    glVertex2i(flip ? cx+w: cx-w, cy+h);
 	glTexCoord2f(tx+.220, ty);    glVertex2i(flip ? cx-w: cx+w, cy+h);
-	glTexCoord2f(tx+.220, ty+1.0); glVertex2i(flip ? cx-w: cx+w, cy-h);
-	
-	
-	
+	glTexCoord2f(tx+.220, ty+1.0); glVertex2i(flip ? cx-w: cx+w, cy-h); //cy-h;
+
+//
+
 	glEnd();
 	glPopMatrix();
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -538,8 +545,8 @@ void render(void)
 	ggprint8b(&r, 16, c, "right arrow -> walk right");
 	ggprint8b(&r, 16, c, "left arrow  <- walk left");
 	//ggprint8b(&r, 16, c, "frame: %i", g.walkFrame);
-        ggprint8b(&r, 16, c, "Time left: "); 
-        ggprint8b(&r, 16, c, "Targets Eliminated: "); 
+        ggprint8b(&r, 16, c, "Time left: ");
+        ggprint8b(&r, 16, c, "Targets Eliminated: ");
 
 	//Names of Group members lab5
 	//extern void displayTimeFunc(int x, int y, double (&x)(double));
@@ -547,37 +554,30 @@ void render(void)
 	/*extern void displayName (const char* name,int x , int y);
 	extern void displayName(int x, int y, float r, float g, float b, const char *text);
 	displayName(200, 200, 256, 0, 0, "Dirk Duclos");
-	displayName("Omar Gonzalez", 100, 100);	
+	displayName("Omar Gonzalez", 100, 100);
 	displayGameName(300, 50, "Marcel Furdui");
 	//displayTimeFunc(300, 50, &calc());
 	*/
-        
+
         // Dirk Duclos
         //Function to draw box for colission detection
-	extern void drawShape(int, int);
+	      extern void drawShape(int, int);
 
-        
+
         drawShape(cx+200, cy+150);
-
+        //setBackground();
 
 	//Omar Gonzalez
 	//Profiling Function
 	//First test
 	/*draw();
-	//Optimized Function 
+	//Optimized Function
 	draw2();
         */
         //Amir
 	/*TimeFunc();
-       
+
         extern void timeCount();
 	timeCount();
         */
 }
-
-
-
-
-
-
-

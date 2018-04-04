@@ -3,10 +3,9 @@ LFLAGS = -lrt -lX11 -lGLU -lGL -pthread -lm #-lXrandr
 
 all: manhattan-shooter
 
-manhattan-shooter: omarG.cpp marcelF.cpp dirkD.cpp manhattan-shooter.cpp
-	g++ $(CFLAGS) omarG.cpp marcelF.cpp dirkD.cpp amirB.cpp manhattan-shooter.cpp timers.cpp libggfonts.a -Wall -Wextra $(LFLAGS) -o manhattan-shooter
+manhattan-shooter:  omarG.cpp dirkD.cpp marcelF.cpp rainforest.cpp
+	g++ $(CFLAGS) omarG.cpp dirkD.cpp marcelF.cpp rainforest.cpp libggfonts.a -Wall -Wextra $(LFLAGS) -o manhattan-shooter
 
 clean:
 	rm -f manhattan-shooter
 	rm -f *.o
-
