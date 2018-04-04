@@ -143,7 +143,7 @@ void credits(int xres, int yres)
         {
         if (gl.display_credits)
         {
-            gl.display_creditsmenu = false;
+            gl.display_credits = false;
             gl.display_mainmenu = true;
             gl.keys[XK_Return] = false;
         }
