@@ -18,15 +18,16 @@ Tasks Assigned:
 #include <ctime>
 #include <sstream>
 
-const double oobillion = 1.0 / 1e9;
+/*const double oobillion = 1.0 / 1e9;
 extern double timeDiff(struct timespec *start, struct timespec *end);
+*/
 
 // vector
 struct Vec {
 	float x, y, z;
-        
-};
 
+};
+/*
 // make an object to check for colission
 struct Shape {
         float width, height;
@@ -46,7 +47,7 @@ void displayName(int x, int y, float r, float g, float b, const char *text)
 {
     // Make a new box to store text
     Rect r2;
-    
+
     // Location of text on screen
     r2.bot = x;
     r2.left = y;
@@ -59,7 +60,7 @@ void displayName(int x, int y, float r, float g, float b, const char *text)
 
 //Draw objects
 void drawShape(int x, int y)
-{       
+{
     Shape s;
     s.center.z=0;
     glColor3ub(255,0,0);
@@ -76,13 +77,16 @@ void drawShape(int x, int y)
     glPopMatrix();
 }
 
+*/
+
+
 //Check for colission
-void detectColission()
+bool detectCursorColission(int cx, int cy, int posx, int posy)
 {
 
-
-
-
-
+if (cx == posx && cy == posy)
+{
+return true;
+}
 
 }
