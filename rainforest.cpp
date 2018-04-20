@@ -2,7 +2,7 @@
 //program: rainforest.cpp
 //author:  Gordon Griesel
 //date:    2013 to 2018
-//
+//Modified by: Omar Gonzalez, Dirk Duclos
 //This program demonstrates the use of OpenGL and XWindows
 //
 //Texture maps are displayed.
@@ -25,6 +25,10 @@
 //#include "log.h"
 //#include "ppm.h"
 #include "fonts.h"
+
+//Added in by Dirk
+#include <iostream>
+using namespace std;
 
 //defined types
 typedef double Flt;
@@ -524,6 +528,15 @@ void checkMouse(XEvent *e)
 	if (e->type == ButtonPress) {
 		if (e->xbutton.button==1) {
 			//Left button is down
+      savex = e->xbutton.x;
+      savey = e->xbutton.y;
+
+      extern bool detectCursorColission(int, int, int, int);
+      if(detectCursorColission(savex, savey, bigfoot.pos[0],bigfoot.pos[1]))
+      {
+       img[0].width = 0;
+       img[0].height = 0;
+      }
 		}
 		if (e->xbutton.button==3) {
 			//Right button is down
@@ -533,7 +546,7 @@ void checkMouse(XEvent *e)
 		//Mouse moved
 		savex = e->xbutton.x;
 		savey = e->xbutton.y;
-	}
+  }
 }
 
 int checkKeys(XEvent *e)
