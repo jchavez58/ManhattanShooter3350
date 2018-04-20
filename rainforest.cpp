@@ -527,16 +527,12 @@ void checkMouse(XEvent *e)
 	}
 	if (e->type == ButtonPress) {
 		if (e->xbutton.button==1) {
-			//Left button is down
-      savex = e->xbutton.x;
-      savey = e->xbutton.y;
-
-      extern bool detectCursorColission(int, int, int, int);
-      if(detectCursorColission(savex, savey, bigfoot.pos[0],bigfoot.pos[1]))
-      {
-       img[0].width = 0;
-       img[0].height = 0;
-      }
+		    //Left button is down
+		    savex = e->xbutton.x;
+                    savey = e->xbutton.y;
+ 
+		    extern void detectCursorColission(int, int, int, int);
+                    detectCursorColission(savex, savey, bigfoot.pos[0],bigfoot.pos[1]);
 		}
 		if (e->xbutton.button==3) {
 			//Right button is down
