@@ -82,10 +82,16 @@ class Image {
 				printf("ERROR opening image: %s\n",ppmname);
 				exit(0);
 			}
-			unlink(ppmname);
+			unlink(ppmname);:FILE *fp;
+			fp = fopen ("filename.txt","w");
+			if (fp!=NULL):
+			{
+				fprintf(fp,"Some String\n");
+				fclose (fp);
+			}
 		}
 };
-Image img[] = {"images/walk_left.png", "images/walk_right.png"};
+Image img[] = {"images/walk_left.png"};
 
 //-----------------------------------------------------------------------------
 //Setup timers

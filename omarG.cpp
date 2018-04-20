@@ -139,6 +139,7 @@ void physics2(void)
 
 		}
 		for (int i=0; i<20; i++) {
+  glBegin(GL_QUADS);
 		//	g.box[i][0] -= 2.0 * (0.05 / g.delay);
 		//	if (g.box[i][0] < -10.0)
 		//		g.box[i][0] += g.xres + 10.0;

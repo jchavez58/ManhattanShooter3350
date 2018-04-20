@@ -122,11 +122,12 @@ public:
 			unlink(ppmname);
 	}
 };
-Image img[4] = {
-"./images/bigfoot.png",
+Image img[5] = {
+"./images/mafia2.png",
 "./images/background2.png",
 "./images/couch1.png",
-"./images/umbrella.png" };
+"./images/umbrella.png",
+"./images/Pillar1.png"};
 
 class Global {
 public:
@@ -137,6 +138,7 @@ public:
 	GLuint forestTexture;
 	GLuint forestTransTexture;
 	GLuint umbrellaTexture;
+  GLuint walkTexture;
 	int showBigfoot;
 	int forest;
   //int table;
@@ -249,7 +251,7 @@ public:
 	void setTitle() {
 		//Set the window title bar.
 		XMapWindow(dpy, win);
-		XStoreName(dpy, win, "3350 - Animation Template");
+		XStoreName(dpy, win, "Manhattan Shooter");
 	}
 	void setupScreenRes(const int w, const int h) {
 		g.xres = w;
@@ -689,22 +691,33 @@ void moveBigfoot()
 	//Update position
 	bigfoot.pos[0] += bigfoot.vel[0];
 	bigfoot.pos[1] += bigfoot.vel[1];
+  bigfoot.pos[2] += bigfoot.vel[2];
 	//Check for collision with window edges
-	if ((bigfoot.pos[0] < -140.0 && bigfoot.vel[0] < 0.0) ||
-		(bigfoot.pos[0] >= (float)g.xres+140.0 &&
-		bigfoot.vel[0] > 0.0))
+	if ((bigfoot.pos[0] < 0.0 && bigfoot.vel[0] < 1.0) ||
+		(bigfoot.pos[0] >= (float)g.xres+0.0 &&
+		bigfoot.vel[0] > 1.0))
 	{
-		bigfoot.vel[0] = -bigfoot.vel[0];
-		addgrav = 0;
+		bigfoot.vel[0] = -bigfoot.vel[0]; //- )
+		addgrav = 0; //0
 	}
 	if ((bigfoot.pos[1] < 150.0 && bigfoot.vel[1] < 0.0) ||
 		(bigfoot.pos[1] >= (float)g.yres && bigfoot.vel[1] > 0.0)) {
 		bigfoot.vel[1] = -bigfoot.vel[1];
-		addgrav = 0;
+		addgrav = 0; //0 //150.0
+      //just added to see was up
 	}
+/*
+  if ((bigfoot.pos[2] < 130.0 && bigfoot.vel[2] < 1.0) ||
+		(bigfoot.pos[2] >= (float)g.xres-130.0 &&
+		bigfoot.vel[2] > 1.0))
+	{
+    bigfoot.pos[2] = bigfoot.pos[2]/0.5;
+  }
+*/
 	//Gravity?
 	if (addgrav)
-		bigfoot.vel[1] -= 0.75;
+		bigfoot.vel[1] += 0.55; //-
+
 }
 
 
@@ -951,8 +964,8 @@ void render()
 			glColor4ub(255,255,255,255);
 		}
 		glBegin(GL_QUADS);
-			if (bigfoot.vel[0] > 0.0) {
-				glTexCoord2f(0.0f, 1.0f); glVertex2i(-wid,-wid);
+			if (bigfoot.vel[0] > 50.0) {
+				glTexCoord2f(0.0f, 1.0f); glVertex2i(-wid,-wid); //-wid -wid
 				glTexCoord2f(0.0f, 0.0f); glVertex2i(-wid, wid);
 				glTexCoord2f(1.0f, 0.0f); glVertex2i( wid, wid);
 				glTexCoord2f(1.0f, 1.0f); glVertex2i( wid,-wid);
@@ -972,7 +985,7 @@ void render()
       glPushMatrix();
        //Sprite1();
       glBindTexture(GL_TEXTURE_2D, g.forestTransTexture);
-      glTranslatef(600,20,0.0);
+      glTranslatef(800,20,0.0);
       glBegin(GL_QUADS);
        glTranslatef(65,65,0.0);
         glTexCoord2f(0.0f, 1.0f); glVertex2i(-20, -20); //(0,0)
@@ -982,9 +995,9 @@ void render()
         //another object
       glEnd();
       glPopMatrix();
-       //couch 2  *move to personal fileSp
+       //couch 2  *move to personal file*
       glPushMatrix();
-       glTranslatef(300,20,0.0);
+      glTranslatef(250,20,0.0);
       glBegin(GL_QUADS);
       glTexCoord2f(0.0f, 1.0f); glVertex2i(-20, -20); //(0,0)
       glTexCoord2f(0.0f, 0.0f); glVertex2i(-20, 200); //(0,g.yres)
@@ -994,7 +1007,7 @@ void render()
      glPopMatrix();
 
        //table object
-     //Sprite1();
+     //Sprite1(); whatever
     }
 		glDisable(GL_ALPHA_TEST);
 	}
