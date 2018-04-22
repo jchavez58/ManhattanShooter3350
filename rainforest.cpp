@@ -53,7 +53,10 @@ const float gravity = -0.2f;
 #define ALPHA 1
 
 //extern void setCursor(Display yt, Window wint, Cursor imag);
-//extern void Sprite1 ();
+extern void SpwanChar();
+extern void createBoss(int, int);
+
+
 
 //-----------------------------------------------------------------------------
 //Setup timers
@@ -241,10 +244,12 @@ public:
 		glXMakeCurrent(dpy, win, glc);
 		setTitle();
     //setting cursor for pointer; *move to personal file*
+    //void extern setupCursor(Cursor a, Display b, Window c, const int type);
+
     Cursor c;
   	c = XCreateFontCursor(dpy, XC_tcross);
   	XDefineCursor(dpy, win, c);
-
+    //setupCursor(c, dpy, win, XC_tcross);
 
 
 	}
@@ -530,7 +535,7 @@ void checkMouse(XEvent *e)
 		    //Left button is down
 		    savex = e->xbutton.x;
                     savey = e->xbutton.y;
- 
+
 		    extern void detectCursorColission(int, int, int, int);
                     detectCursorColission(savex, savey, bigfoot.pos[0],bigfoot.pos[1]);
 		}
@@ -1015,8 +1020,8 @@ void render()
      glEnd();
      glPopMatrix();
 
-       //table object
-     //Sprite1(); whatever
+       //table objectbigfoot.pos[0], bigfoot.pos[1], bigfoot.pos[2]
+     SpwanChar();
     }
 		glDisable(GL_ALPHA_TEST);
 	}
@@ -1076,7 +1081,7 @@ void render()
   glTexCoord2f(tx+.220, ty);    glVertex2i(flip ? cx-w: cx+w, cy+h);
   glTexCoord2f(tx+.220, ty+1.0); glVertex2i(flip ? cx-w: cx+w, cy-h);
 */
-   //Sprite1();
+ SpwanChar();;
 	unsigned int c = 0x00ffff44;
 	r.bot = g.yres - 20;
 	r.left = 10;
