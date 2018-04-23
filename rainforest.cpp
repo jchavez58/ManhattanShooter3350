@@ -55,6 +55,7 @@ const float gravity = -0.2f;
 //extern void setCursor(Display yt, Window wint, Cursor imag);
 extern void SpwanChar();
 extern void createBoss(int, int);
+extern void displayMenu (const char* mess, int x, int y);
 
 
 
@@ -1055,6 +1056,7 @@ void render()
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 
+ displayMenu ("Press b to start game", 800 , 600);
 	//
 	//
   //float h = 40.0;
@@ -1081,8 +1083,10 @@ void render()
   glTexCoord2f(tx+.220, ty);    glVertex2i(flip ? cx-w: cx+w, cy+h);
   glTexCoord2f(tx+.220, ty+1.0); glVertex2i(flip ? cx-w: cx+w, cy-h);
 */
- SpwanChar();;
-	unsigned int c = 0x00ffff44;
+ //SpwanChar();
+ displayMenu ("Press B to start game", 240, 600);
+
+  unsigned int c = 0x00ffff44;
 	r.bot = g.yres - 20;
 	r.left = 10;
 	r.center = 0;
