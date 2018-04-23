@@ -1084,6 +1084,7 @@ void render()
   glTexCoord2f(tx+.220, ty+1.0); glVertex2i(flip ? cx-w: cx+w, cy-h);
 */
  //SpwanChar();
+if (!g.showBigfoot)
  displayMenu ("Press B to start game", 240, 600);
 
   unsigned int c = 0x00ffff44;
