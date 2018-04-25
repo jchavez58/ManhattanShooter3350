@@ -537,8 +537,8 @@ void checkMouse(XEvent *e)
 		    savex = e->xbutton.x;
                     savey = e->xbutton.y;
 
-		    extern void detectCursorColission(int, int, int, int);
-                    detectCursorColission(savex, savey, bigfoot.pos[0],bigfoot.pos[1]);
+		    //extern void detectCursorColission(int, int, int, int);
+      //detectCursorColission(savex, savey, bigfoot.pos[0],bigfoot.pos[1]);
 		}
 		if (e->xbutton.button==3) {
 			//Right button is down
@@ -1084,6 +1084,10 @@ void render()
   glTexCoord2f(tx+.220, ty+1.0); glVertex2i(flip ? cx-w: cx+w, cy-h);
 */
  //SpwanChar();
+
+extern void drawBox(int,int,int,int,int);
+drawBox(img[0].width, img[0].height,bigfoot.pos[0], bigfoot.pos[1],bigfoot.pos[2]);
+
 if (!g.showBigfoot)
  displayMenu ("Press B to start game", 240, 600);
 
