@@ -54,6 +54,7 @@ const float gravity = -0.2f;
 
 //extern void setCursor(Display yt, Window wint, Cursor imag);
 //extern void SpwanChar();
+extern void Destroy(character&);
 extern void SpawnBoss(Game &g, int posy, int posx, int posz, int vel, int wid);
 extern void createBoss(int, int);
 extern void displayMenu (const char* mess, int x, int y);
@@ -531,6 +532,8 @@ int checkKeys(XEvent *e)
 				ndrops = 0;
 			break;
 		case XK_n:
+			 Destroy(bigfoot);
+
 			break;
 		case XK_w:
 			if (shift) {
@@ -872,9 +875,12 @@ void render()
 		glEnd();
 	}
 
+  //extern void Destroy(character&);
+  extern void speedupChar(character&);
   SpawnBoss(g, bigfoot.pos[0], bigfoot.pos[1], bigfoot.pos[2], bigfoot.vel[0], wid);
   SpawnBoss(g, bigfoot.pos[0], bigfoot.pos[1], bigfoot.pos[2], bigfoot.vel[0], wid);
-
+  speedupChar(bigfoot);
+ // Destroy(bigfoot);
 
   if (g.showBigfoot) {
 
@@ -932,6 +938,7 @@ void render()
       glTexCoord2f(1.0f, 1.0f); glVertex2i(200, -20); //(g.xres,0);
      glEnd();
      glPopMatrix();
+      //Destroy(bigfoot);
 
        //table objectbigfoot.pos[0], bigfoot.pos[1], bigfoot.pos[2]
      //SpwanChar();

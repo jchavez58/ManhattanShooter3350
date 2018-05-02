@@ -1,6 +1,7 @@
 //Author: Omar Gonzalez
 //Date: 03/05/2018
-//File contains code for sprite animations and texture mapping
+//File contains code for sprite animations and texture mapping 
+//Edit: Will now take care of some collision detection and some physics, maybe menu?
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,23 +34,37 @@ void SpawnBoss(Game &g, int posy, int posx, int posz, int vel, int wid)
 		glColor4ub(255,255,255,255);
 	}
 	glBegin(GL_QUADS);
-		if (vel > 50.0) {
-			glTexCoord2f(0.0f, 1.0f); glVertex2i(-wid,-wid); //-wid -wid
-			glTexCoord2f(0.0f, 0.0f); glVertex2i(-wid, wid);
-			glTexCoord2f(1.0f, 0.0f); glVertex2i( wid, wid);
-			glTexCoord2f(1.0f, 1.0f); glVertex2i( wid,-wid);
-		} else {
-			glTexCoord2f(1.0f, 1.0f); glVertex2i(-wid,-wid);
-			glTexCoord2f(1.0f, 0.0f); glVertex2i(-wid, wid);
-			glTexCoord2f(0.0f, 0.0f); glVertex2i( wid, wid);
-			glTexCoord2f(0.0f, 1.0f); glVertex2i( wid,-wid);
-		}
+	if (vel > 50.0) {
+		glTexCoord2f(0.0f, 1.0f); glVertex2i(-wid,-wid); //-wid -wid
+		glTexCoord2f(0.0f, 0.0f); glVertex2i(-wid, wid);
+		glTexCoord2f(1.0f, 0.0f); glVertex2i( wid, wid);
+		glTexCoord2f(1.0f, 1.0f); glVertex2i( wid,-wid);
+	} else {
+		glTexCoord2f(1.0f, 1.0f); glVertex2i(-wid,-wid);
+		glTexCoord2f(1.0f, 0.0f); glVertex2i(-wid, wid);
+		glTexCoord2f(0.0f, 0.0f); glVertex2i( wid, wid);
+		glTexCoord2f(0.0f, 1.0f); glVertex2i( wid,-wid);
+	}
 
 	glEnd();
 	glPopMatrix();
 
 }
 
+void speedupChar(character &g)
+{
+	g.vel[0] += 0.5;
+	g.vel[1] += 0.5;;
+}
+
+void Destroy(character &g)
+{
+
+	g.pos[0] = 20000;
+	g.pos[1] = 20000;
+	g.pos[2] = 20000;
+
+}
 
 void displayMenu (const char* mess, int x, int y) {
 	//Object that handles rendering of text
@@ -60,6 +75,8 @@ void displayMenu (const char* mess, int x, int y) {
 	//Print name to screen
 	ggprint16(&r, 16, 0x0ffff00, mess);
 }
+
+
 
 //setup timers
 const double physicsRate = 1.0 / 60;
