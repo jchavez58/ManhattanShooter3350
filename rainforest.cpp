@@ -25,7 +25,7 @@
 //#include "log.h"
 //#include "ppm.h"
 #include "fonts.h"
-
+#include "Sprite.cpp"
 //Added in by Dirk
 #include <iostream>
 using namespace std;
@@ -53,7 +53,8 @@ const float gravity = -0.2f;
 #define ALPHA 1
 
 //extern void setCursor(Display yt, Window wint, Cursor imag);
-extern void SpwanChar();
+//extern void SpwanChar();
+extern void SpawnBoss(Game &g, int posy, int posx, int posz, int vel, int wid);
 extern void createBoss(int, int);
 extern void displayMenu (const char* mess, int x, int y);
 
@@ -76,109 +77,17 @@ void timeCopy(struct timespec *dest, struct timespec *source) {
 	memcpy(dest, source, sizeof(struct timespec));
 }
 //-----------------------------------------------------------------------------
-
-class Image {
-public:
-	int width, height;
-	unsigned char *data;
-	~Image() { delete [] data; }
-	Image(const char *fname) {
-		if (fname[0] == '\0')
-			return;
-		//printf("fname **%s**\n", fname);
-		int ppmFlag = 0;
-		char name[40];
-		strcpy(name, fname);
-		int slen = strlen(name);
-		char ppmname[80];
-		if (strncmp(name+(slen-4), ".ppm", 4) == 0)
-			ppmFlag = 1;
-		if (ppmFlag) {
-			strcpy(ppmname, name);
-		} else {
-			name[slen-4] = '\0';
-			//printf("name **%s**\n", name);
-			sprintf(ppmname,"%s.ppm", name);
-			//printf("ppmname **%s**\n", ppmname);
-			char ts[100];
-			//system("convert eball.jpg eball.ppm");
-			sprintf(ts, "convert %s %s", fname, ppmname);
-			system(ts);
-		}
-		//sprintf(ts, "%s", name);
-		FILE *fpi = fopen(ppmname, "r");
-		if (fpi) {
-			char line[200];
-			fgets(line, 200, fpi);
-			fgets(line, 200, fpi);
-			//skip comments and blank lines
-			while (line[0] == '#' || strlen(line) < 2)
-				fgets(line, 200, fpi);
-			sscanf(line, "%i %i", &width, &height);
-			fgets(line, 200, fpi);
-			//get pixel data
-			int n = width * height * 3;
-			data = new unsigned char[n];
-			for (int i=0; i<n; i++)
-				data[i] = fgetc(fpi);
-			fclose(fpi);
-		} else {
-			printf("ERROR opening image: %s\n",ppmname);
-			exit(0);
-		}
-		if (!ppmFlag)
-			unlink(ppmname);
-	}
-};
+//textures
 Image img[5] = {
 "./images/mafia2.png",
 "./images/background2.png",
 "./images/couch1.png",
 "./images/umbrella.png",
 "./images/Pillar1.png"};
-
-class Global {
-public:
-	int done;
-	int xres, yres;
-	GLuint bigfootTexture;
-	GLuint silhouetteTexture;
-	GLuint forestTexture;
-	GLuint forestTransTexture;
-	GLuint umbrellaTexture;
-  GLuint walkTexture;
-	int showBigfoot;
-	int forest;
-  //int table;
-	int silhouette;
-	int trees;
-	int showRain;
-	int showUmbrella;
-	int deflection;
-	Global() {
-		//logOpen();
-		done=0;
-		xres=800; //800
-		yres=600;  //600
-		showBigfoot=0;
-		forest=1;
-    //table=1;
-		silhouette=1;
-		trees=1;
-		showRain=0;
-		showUmbrella=0;
-		deflection=0;
-	}
-	~Global() {
-	//logClose();
-	}
-} g;
-
-class Bigfoot {
-public:
-	Vec pos;
-	Vec vel;
-} bigfoot;
+//gmae variables
+Game g;
+//character
+character bigfoot;
 
 class Raindrop {
 public:
@@ -427,7 +336,7 @@ void initOpengl(void)
 	glGenTextures(1, &g.bigfootTexture);
 	glGenTextures(1, &g.silhouetteTexture);
 	glGenTextures(1, &g.forestTexture);
-	glGenTextures(1, &g.umbrellaTexture);
+	//glGenTextures(1, &g.umbrellaTexture);
 	//-------------------------------------------------------------------------
 	//bigfoot
 	//
@@ -962,7 +871,9 @@ void render()
 			glTexCoord2f(1.0f, 1.0f); glVertex2i(g.xres, 0); //(g.xres,0)
 		glEnd();
 	}
-  //add my sprite add aprite porperties from wlak frame
+
+  SpawnBoss(g, bigfoot.pos[0], bigfoot.pos[1], bigfoot.pos[2], bigfoot.vel[0], wid);
+  SpawnBoss(g, bigfoot.pos[0], bigfoot.pos[1], bigfoot.pos[2], bigfoot.vel[0], wid);
 
 
   if (g.showBigfoot) {
@@ -970,6 +881,7 @@ void render()
     glPushMatrix();
 
     glTranslatef(bigfoot.pos[0], bigfoot.pos[1], bigfoot.pos[2]);
+
 		if (!g.silhouette) {
 			glBindTexture(GL_TEXTURE_2D, g.bigfootTexture);
 		} else {
@@ -1022,7 +934,7 @@ void render()
      glPopMatrix();
 
        //table objectbigfoot.pos[0], bigfoot.pos[1], bigfoot.pos[2]
-     SpwanChar();
+     //SpwanChar();
     }
 		glDisable(GL_ALPHA_TEST);
 	}

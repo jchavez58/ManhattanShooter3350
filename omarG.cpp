@@ -18,39 +18,22 @@
 typedef double Flt;
 typedef double Vec[3];
 typedef Flt	Matrix[4][4];
-/*
-#define rnd() (((double)rand())/(double)RAND_MAX)
-#define random(a) (rand()%a)
-#define MakeVector(x, y, z, v) (v)[0]=(x),(v)[1]=(y),(v)[2]=(z)
-#define VecCopy(a,b) (b)[0]=(a)[0];(b)[1]=(a)[1];(b)[2]=(a)[2]
-#define VecDot(a,b)	((a)[0]*(b)[0]+(a)[1]*(b)[1]+(a)[2]*(b)[2])
-#define VecSub(a,b,c) (c)[0]=(a)[0]-(b)[0];  \(c)[1]=(a)[1]-(b)[1]; \(c)[2]=(a)[2]-(b)[2]
-*/
-//Initliaze characters
-Image1 img1("./images/mafia2.png");
-character boss;
-Game sprite1;
 
-
-
-//Press 'b'  to spawn the characters and objects drawn in the screen
-
-void SpwanChar()
+void SpawnBoss(Game &g, int posy, int posx, int posz, int vel, int wid)
 {
+	glPushMatrix();
 
-	float wid = 120.0f; //120
-
-	glTranslatef(boss.pos[0], boss.pos[1], boss.pos[2]);
-	if (!sprite1.silhouette) {
-		glBindTexture(GL_TEXTURE_2D, sprite1.bossTexture);
+	glTranslatef(posx,posy, posz);
+	if (!g.silhouette) {
+		glBindTexture(GL_TEXTURE_2D, g.bigfootTexture);
 	} else {
-		glBindTexture(GL_TEXTURE_2D, sprite1.silhouetteTexture);
+		glBindTexture(GL_TEXTURE_2D, g.silhouetteTexture);
 		glEnable(GL_ALPHA_TEST);
 		glAlphaFunc(GL_GREATER, 0.0f);
 		glColor4ub(255,255,255,255);
 	}
 	glBegin(GL_QUADS);
-		if (boss.vel[0] > 50.0) {
+		if (vel > 50.0) {
 			glTexCoord2f(0.0f, 1.0f); glVertex2i(-wid,-wid); //-wid -wid
 			glTexCoord2f(0.0f, 0.0f); glVertex2i(-wid, wid);
 			glTexCoord2f(1.0f, 0.0f); glVertex2i( wid, wid);
@@ -63,6 +46,8 @@ void SpwanChar()
 		}
 
 	glEnd();
+	glPopMatrix();
+
 }
 
 

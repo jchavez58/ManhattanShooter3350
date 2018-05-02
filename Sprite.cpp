@@ -8,7 +8,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <GL/glx.h>
-
+/********************Vector Definition*******************/
 typedef double Flt;
 typedef double Vec[3];
 typedef Flt	Matrix[4][4];
@@ -21,13 +21,15 @@ typedef Flt	Matrix[4][4];
 #define VecSub(a,b,c) (c)[0]=(a)[0]-(b)[0];\
                       (c)[1]=(a)[1]-(b)[1];\
                       (c)[2]=(a)[2]-(b)[2];
-class Image1 {
+
+/********************************************************/
+class Image {
 
 	public:
 		int width, height;
 		unsigned char *data;
-		~Image1() { delete [] data; }
-		Image1(const char *fname) {
+		~Image() { delete [] data; }
+		Image(const char *fname) {
 			if (fname[0] == '\0')
 				return;
 			//printf("fname **%s**\n", fname);
@@ -66,33 +68,45 @@ class Image1 {
 			unlink(ppmname);
 		}
 };
+
 class character {
 public:
 	Vec pos;
 	Vec vel;
 };
+
 class Game {
 public:
-	int done;
+  int done;
 	int xres, yres;
-	GLuint bossTexture;
+	GLuint bigfootTexture;
 	GLuint silhouetteTexture;
+	GLuint forestTexture;
+	GLuint forestTransTexture;
+	GLuint umbrellaTexture;
   GLuint walkTexture;
-	int showCharacter;
-	int showBoss;
+	int showBigfoot;
+	int forest;
   //int table;
 	int silhouette;
 	int trees;
+	int showRain;
+	int showUmbrella;
+	int deflection;
 
 	Game() {
 		//logOpen();
-		done=0;
+    done=0;
 		xres=800; //800
 		yres=600;  //600
-		showCharacter=0;
-
+		showBigfoot=0;
+		forest=1;
     //table=1;
 		silhouette=1;
+		trees=1;
+		showRain=0;
+		showUmbrella=0;
+		deflection=0;
 	}
 	~Game() {
 	//logClose();
