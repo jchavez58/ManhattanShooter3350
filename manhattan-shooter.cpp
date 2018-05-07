@@ -17,130 +17,48 @@
 #include <X11/keysym.h>
 #include <GL/glx.h>
 #include "fonts.h"
-
+#include "game.h"
 
 //defined types
-typedef double Flt;
-typedef double Vec[3];
-typedef Flt	Matrix[4][4];
+//typedef double Flt;
+//typedef double Vec[3];
+//typedef Flt	Matrix[4][4];
 
 //macros
-#define rnd() (((double)rand())/(double)RAND_MAX)
-#define random(a) (rand()%a)
-#define MakeVector(x, y, z, v) (v)[0]=(x),(v)[1]=(y),(v)[2]=(z)
-#define VecCopy(a,b) (b)[0]=(a)[0];(b)[1]=(a)[1];(b)[2]=(a)[2]
-#define VecDot(a,b)	((a)[0]*(b)[0]+(a)[1]*(b)[1]+(a)[2]*(b)[2])
-#define VecSub(a,b,c) (c)[0]=(a)[0]-(b)[0];  \(c)[1]=(a)[1]-(b)[1]; \(c)[2]=(a)[2]-(b)[2]
+//#define rnd() (((double)rand())/(double)RAND_MAX)
+//#define random(a) (rand()%a)
+//#define MakeVector(x, y, z, v) (v)[0]=(x),(v)[1]=(y),(v)[2]=(z)
+//#define VecCopy(a,b) (b)[0]=(a)[0];(b)[1]=(a)[1];(b)[2]=(a)[2]
+//#define VecDot(a,b)	((a)[0]*(b)[0]+(a)[1]*(b)[1]+(a)[2]*(b)[2])
+//#define VecSub(a,b,c) (c)[0]=(a)[0]-(b)[0];  \(c)[1]=(a)[1]-(b)[1]; \(c)[2]=(a)[2]-(b)[2]
 //constants
-const float timeslice = 1.0f;
-const float gravity = -0.2f;
+//const float timeslice = 1.0
+//const float gravity = -0.2f;
 bool flip = false;
-
+bool cd = false;
 #define ALPHA 1
-extern void draw();
-extern void draw2();
-extern void TimeFunc();
+extern void Drawbullets(Bullet*, Global&);
+extern void ShootBullets(Global&, Bullet*, Timers&);
+extern void movecharUp(Global&);
+extern void movecharDown(Global&);
+extern void moveForward(Global&);
+extern void moveBack(Global&);
+//extern voindraw();
+//extern void draw2();
+//extern void TimeFunc();
 //extern setBackground();
-class Image {
-	public:
-		int width, height;
-		unsigned char *data;
-		~Image() { delete [] data; }
-		Image(const char *fname) {
-			if (fname[0] == '\0')
-				return;
-			//printf("fname **%s**\n", fname);
-			char name[40];
-			strcpy(name, fname);
-			int slen = strlen(name);
-			name[slen-4] = '\0';
-			//printf("name **%s**\n", name);
-			char ppmname[80];
-			sprintf(ppmname,"%s.ppm", name);
-			//printf("ppmname **%s**\n", ppmname);
-			char ts[100];
-			//system("convert eball.jpg eball.ppm");
-			sprintf(ts, "convert %s %s", fname, ppmname);
-			system(ts);
-			//sprintf(ts, "%s", name);
-			FILE *fpi = fopen(ppmname, "r");
-			if (fpi) {
-				char line[200];
-				fgets(line, 200, fpi);
-				fgets(line, 200, fpi);
-				while (line[0] == '#')
-					fgets(line, 200, fpi);
-				sscanf(line, "%i %i", &width, &height);
-				fgets(line, 200, fpi);
-				//get pixel data
-				int n = width * height * 3;
-				data = new unsigned char[n];
-				for (int i=0; i<n; i++)
-					data[i] = fgetc(fpi);
-				fclose(fpi);
-			} else {
-				printf("ERROR opening image: %s\n",ppmname);
-				exit(0);
-			}
-			unlink(ppmname);:FILE *fp;
-			fp = fopen ("filename.txt","w");
-			if (fp!=NULL):
-			{
-				fprintf(fp,"Some String\n");
-				fclose (fp);
-			}
-		}
-};
+
+
 Image img[] = {"images/walk_left.png"};
 
 //-----------------------------------------------------------------------------
 //Setup timers
-class Timers {
-	public:
-		double physicsRate;
-		double oobillion;
-		struct timespec timeStart, timeEnd, timeCurrent;
-		struct timespec walkTime;
-		Timers() {
-			physicsRate = 1.0 / 30.0;
-			oobillion = 1.0 / 1e9;
-		}
-		double timeDiff(struct timespec *start, struct timespec *end) {
-			return (double)(end->tv_sec - start->tv_sec ) +
-				(double)(end->tv_nsec - start->tv_nsec) * oobillion;
-		}
-		void timeCopy(struct timespec *dest, struct timespec *source) {
-			memcpy(dest, source, sizeof(struct timespec));
-		}
-		void recordTime(struct timespec *t) {
-			clock_gettime(CLOCK_REALTIME, t);
-		}
-} timers;
+Timers timers;
 //-----------------------------------------------------------------------------
 
-class Global {
-	public:
-		int done;
-		int xres, yres;
-		int walk;
-		int walkFrame;
-		double delay;
-		GLuint walkTexture;
-		Vec box[20];
-		Global() {
-			done=0;
-			xres=800;
-			yres=600;
-			walk=0;
-			walkFrame=0;
-			delay = 0.1;
-			for (int i=0; i<20; i++) {
-        box[i][0] = rnd() * xres;
-				box[i][1] = rnd() * (yres-220) + 220.0;
-				box[i][2] = 0.0;
-			}
-		}
-} g;
+Global g;
+//Bullet *b;
+
 
 class X11_wrapper {
 	private:
@@ -361,8 +279,8 @@ void checkMouse(XEvent *e)
 int checkKeys(XEvent *e)
 {
 	//keyboard input
-
-
+	//float moveup = g.yres/2.0;
+	Bullet * b = NULL;
 	static int shift=0;
 	if (e->type != KeyRelease && e->type != KeyPress)
 		return 0;
@@ -378,23 +296,36 @@ int checkKeys(XEvent *e)
 	}
 	(void)shift;
 	switch (key) {
+		case XK_a:
+			//for(int i =0; i < 300 ; i++) 
+				ShootBullets(g,b,timers);
+			break;
 		case XK_w:
 			timers.recordTime(&timers.walkTime);
 			g.walk ^= 1;
 			break;
 		case XK_Left:
+			moveBack(g);
 			flip = true;
 			//g.xres -= 5;
-
+			//extern void moveForward(Global&);
+			//moveForward(g);
 			break;
 		case XK_Right:
+			moveForward(g);
 			flip = false;
 			break;
 		case XK_Up:
-
+			//g.yres += 10;
+			//moveup;
+			//g.walkFrame += 5;
+			//extern void movecharUp(Global&);
+			movecharUp(g);
 			break;
 		case XK_Down:
-
+			//extern void movecharDown(Global&);
+			movecharDown(g);
+			//g.yres -= 10;
 			break;
 		case XK_equal:
 			g.delay -= 0.005;
@@ -429,9 +360,11 @@ Flt VecNormalize(Vec vec)
 	vec[2] = zlen * tlen;
 	return(len);
 }
-
+extern void UpdateBulletpos(Bullet*, Global&, Timers&);
+//Timers t;
 void physics(void)
-{
+{        
+	Bullet *b = NULL;
 	if (g.walk) {
 		//man is walking...
 		//when time is up, advance the frame.
@@ -441,21 +374,22 @@ void physics(void)
 			//advance
 			++g.walkFrame;
 
-                        //Dirk Duclos
-                        //With each frame, update x position of walk frame
-                        //Need to change walk frame to be just image
-      g.xres += 5;
+			//Dirk Duclos
+			//With each frame, update x position of walk frame
+			//Need to change walk frame to be just image
+			//g.xres += 5;
 
-    if (g.walkFrame >= 16)
+			if (g.walkFrame >= 16)
 				g.walkFrame -= 16;
 			timers.recordTime(&timers.walkTime);
-
+                //UpdateBulletpos(b,g);
 
 		}
+		UpdateBulletpos(b,g,timers);
 		for (int i=0; i<20; i++) {
-		//	g.box[i][0] -= 2.0 * (0.05 / g.delay);
-		//	if (g.box[i][0] < -10.0)
-		//		g.box[i][0] += g.xres + 10.0;
+			g.box[i][0] -= 2.0 * (0.05 / g.delay);
+			if (g.box[i][0] < -10.0)
+				g.box[i][0] += g.xres + 10.0;
 
 		}
 	}
@@ -471,16 +405,16 @@ void render(void)
 	//Clear the screen
 	glClearColor(0.1, 0.1, 0.1, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
-	float cx = g.xres/2.0;
+	float cx = g.xres/14.0;
 	float cy = g.yres/2.0;
 	//
 	//show ground
 	glBegin(GL_QUADS);
 	glColor3f(0.2, 0.2, 0.2);
-	glVertex2i(0,       220);
-	glVertex2i(g.xres, 220);
+	glVertex2i(0,       280);
+	glVertex2i(g.gxres, 280);
 	glColor3f(0.4, 0.4, 0.4);
-	glVertex2i(g.xres,   0);
+	glVertex2i(g.gxres,   0);
 	glVertex2i(0,         0);
 	glEnd();
 	//
@@ -496,7 +430,7 @@ void render(void)
 	//show boxes as background
 	for (int i=0; i<20; i++) {
 		glPushMatrix();
-	//	glTranslated(g.box[i][0],g.box[i][1],g.box[i][2]);
+		glTranslated(g.box[i][0],g.box[i][1],g.box[i][2]);
 		glColor3f(0.2, 0.2, 0.2);
 		glBegin(GL_QUADS);
 		glVertex2i( 0,  0);
@@ -510,7 +444,7 @@ void render(void)
 
 	}
 
-//walk frame.
+	//walk frame.
 	float h = 40.0;
 	float w = h * 0.5; //0.5 h = 50.0
 	glPushMatrix();
@@ -534,16 +468,23 @@ void render(void)
 	glTexCoord2f(tx+.220, ty);    glVertex2i(flip ? cx-w: cx+w, cy+h);
 	glTexCoord2f(tx+.220, ty+1.0); glVertex2i(flip ? cx-w: cx+w, cy-h); //cy-h;
 
-//
+	//
 
 	glEnd();
 	glPopMatrix();
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_ALPHA_TEST);
 
+	//DrawBullets
+	//extern void Drawbullets(Bullet*, Global&);
+	Bullet * b = NULL;
+	Drawbullets(b,g);
+
 	// Menu
+
+        int topright = 600;
 	unsigned int c = 0x00ffff44;
-	r.bot = g.yres - 20;
+	r.bot = topright - 20;
 	r.left = 10;
 	r.center = 0;
 	//ggprint8b(&r, 16, c, "W   Walk cycle");
@@ -552,39 +493,40 @@ void render(void)
 	ggprint8b(&r, 16, c, "right arrow -> walk right");
 	ggprint8b(&r, 16, c, "left arrow  <- walk left");
 	//ggprint8b(&r, 16, c, "frame: %i", g.walkFrame);
-        ggprint8b(&r, 16, c, "Time left: ");
-        ggprint8b(&r, 16, c, "Targets Eliminated: ");
+	ggprint8b(&r, 16, c, "Time left: ");
+	ggprint8b(&r, 16, c, "Targets Eliminated: ");
 
 	//Names of Group members lab5
 	//extern void displayTimeFunc(int x, int y, double (&x)(double));
 	extern void displayGameName(int x, int y, const char* name);
 	/*extern void displayName (const char* name,int x , int y);
-	extern void displayName(int x, int y, float r, float g, float b, const char *text);
-	displayName(200, 200, 256, 0, 0, "Dirk Duclos");
-	displayName("Omar Gonzalez", 100, 100);
-	displayGameName(300, 50, "Marcel Furdui");
+	  extern void displayName(int x, int y, float r, float g, float b, const char *text);
+	  displayName(200, 200, 256, 0, 0, "Dirk Duclos");
+	  displayName("Omar Gonzalez", 100, 100);
+	  displayGameName(300, 50, "Marcel Furdui");
 	//displayTimeFunc(300, 50, &calc());
-	*/
+	 */
 
-        // Dirk Duclos
-        //Function to draw box for colission detection
-	      extern void drawShape(int, int);
+	// Dirk Duclos
+	//Function to draw box for colission detection
+	//extern void drawShape(int, int);
 
 
-        drawShape(cx+200, cy+150);
-        //setBackground();
+	//drawShape(cx+200, cy+150);
+	//setBackground();
 
 	//Omar Gonzalez
 	//Profiling Function
 	//First test
 	/*draw();
-	//Optimized Function
+	//Optimized Fuinction
 	draw2();
-        */
-        //Amir
+	 */
+	//Amir
 	/*TimeFunc();
 
-        extern void timeCount();
-	timeCount();
-        */
+	  extern void timeCount();
+	  timeCount();
+	 */
 }
+

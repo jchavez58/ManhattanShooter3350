@@ -54,6 +54,7 @@ const float gravity = -0.2f;
 
 //extern void setCursor(Display yt, Window wint, Cursor imag);
 //extern void SpwanChar();
+extern void setTextures(Image []);
 extern void Destroy(character&);
 extern void SpawnBoss(Game &g, int posy, int posx, int posz, int vel, int wid);
 extern void createBoss(int, int);
@@ -79,12 +80,14 @@ void timeCopy(struct timespec *dest, struct timespec *source) {
 }
 //-----------------------------------------------------------------------------
 //textures
+
 Image img[5] = {
 "./images/mafia2.png",
 "./images/background2.png",
 "./images/couch1.png",
 "./images/umbrella.png",
 "./images/Pillar1.png"};
+
 //gmae variables
 Game g;
 //character
