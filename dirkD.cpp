@@ -38,13 +38,6 @@ struct Shape {
 } s;
 
 //Check for colission
-void detectCursorColission(int cx, int cy, int posx, int posy, character &g)
-{
-
-    if (cx == posx || cy == posy) {
-    Destroy(g);
-    }
-}
 
 void drawBox(int x,int y, int posx, int posy, int posz)
 {

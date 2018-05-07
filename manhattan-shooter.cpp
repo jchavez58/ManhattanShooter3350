@@ -49,7 +49,7 @@ extern void moveBack(Global&);
 //extern setBackground();
 
 
-Image img[] = {"images/walk_left.png"};
+Image img[] = {"images/walk_left.png","images/Background.jpg"};
 
 //-----------------------------------------------------------------------------
 //Setup timers
@@ -427,6 +427,7 @@ void render(void)
 	//	glVertex2i(cx-60, 130);
 	//glEnd();
 	//
+	
 	//show boxes as background
 	for (int i=0; i<20; i++) {
 		glPushMatrix();
@@ -439,9 +440,6 @@ void render(void)
 		glVertex2i(20,  0);
 		glEnd();
 		glPopMatrix();
-
-
-
 	}
 
 	//walk frame.
