@@ -150,7 +150,7 @@ public:
 		Colormap cmap = XCreateColormap(dpy, root, vi->visual, AllocNone);
 		swa.colormap = cmap;
 		swa.event_mask = ExposureMask | KeyPressMask | KeyReleaseMask |
-							StructureNotifyMask | SubstructureNotifyMask;
+				 ButtonPress | ButtonReleaseMask | StructureNotifyMask | SubstructureNotifyMask;
 		win = XCreateWindow(dpy, root, 0, 0, g.xres, g.yres, 0,
 								vi->depth, InputOutput, vi->visual,
 								CWColormap | CWEventMask, &swa);
@@ -441,6 +441,12 @@ void checkMouse(XEvent *e)
 	static int savex = 0;
 	static int savey = 0;
 	//
+	if (e->type != ButtonRelease &&
+	    e->type != ButtonPress &&
+            e->type != MotionNotify) {
+            return;
+	    }	    
+	
 	if (e->type == ButtonRelease) {
 		return;
 	}
@@ -449,19 +455,23 @@ void checkMouse(XEvent *e)
 		    //Left button is down
 		    savex = e->xbutton.x;
                     savey = e->xbutton.y;
-
-		    //extern void detectCursorColission(int, int, int, int);
-      //detectCursorColission(savex, savey, bigfoot.pos[0],bigfoot.pos[1]);
-		}
+		    extern void detectCursorColission(int, int, int, int, character&);
+                    detectCursorColission(savex, savey, bigfoot.pos[0],bigfoot.pos[1],bigfoot);
+		    return; 
+		    }
 		if (e->xbutton.button==3) {
 			//Right button is down
+		        return;
 		}
 	}
+	if (e->type == MotionNotify) {
 	if (savex != e->xbutton.x || savey != e->xbutton.y) {
 		//Mouse moved
 		savex = e->xbutton.x;
 		savey = e->xbutton.y;
-  }
+        	cout << "mouse moved" << endl;
+	}
+	}
 }
 
 int checkKeys(XEvent *e)
