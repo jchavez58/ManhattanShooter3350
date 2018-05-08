@@ -38,6 +38,7 @@ struct Shape {
 } s;
 
 //Check for colission
+//<<<<<<< HEAD
 /*
 void detectCursorColission(int cx, int cy, int posx, int posy, character &g)
 {
@@ -47,6 +48,9 @@ void detectCursorColission(int cx, int cy, int posx, int posy, character &g)
     }
 }
 */
+//=======
+
+//>>>>>>> 48b43b09306bd01a22084af96af4994e8ca1f6ed
 void drawBox(int x,int y, int posx, int posy, int posz)
 {
     glPushMatrix();

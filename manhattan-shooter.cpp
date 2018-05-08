@@ -48,9 +48,15 @@ extern void moveBack(Global&);
 //extern void TimeFunc();
 //extern setBackground();
 
+bool inMainMenu = true;
+bool inGame = false;
+bool inPauseMenu = false;
+int menuPosition = 1;
+//bool inMainMenu = false;
+//bool inMainMenu = false;
 
-Image img[] = {"images/walk_left.png"};
-
+Image img[] = {"images/walk_left.png","images/Background.jpg",
+	"images/menu11.png", "images/pointer.png"};
 //-----------------------------------------------------------------------------
 //Setup timers
 Timers timers;
@@ -229,6 +235,8 @@ void initOpengl(void)
 	//
 	//create opengl texture elements
 	glGenTextures(1, &g.walkTexture);
+	glGenTextures(1, &g.mainMenuTexture);
+	glGenTextures(1, &g.pointerTexture);
 	//-------------------------------------------------------------------------
 	//silhouette
 	//this is similar to a sprite graphic
@@ -242,6 +250,34 @@ void initOpengl(void)
 	unsigned char *walkData = buildAlphaData(&img[0]);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
 			GL_RGBA, GL_UNSIGNED_BYTE, walkData);
+
+
+
+	w = 1024;
+	h = 768;
+	glBindTexture(GL_TEXTURE_2D, g.mainMenuTexture);
+	//
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	//
+	//must build a new set of data...
+	unsigned char *mainMenuData = buildAlphaData(&img[2]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+			GL_RGBA, GL_UNSIGNED_BYTE, mainMenuData);
+
+	w = 40;
+	h = 24;
+	glBindTexture(GL_TEXTURE_2D, g.pointerTexture);
+	//
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	//
+	//must build a new set of data...
+	unsigned char *pointerData = buildAlphaData(&img[3]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+			GL_RGBA, GL_UNSIGNED_BYTE, pointerData);
+
+
 	//free(walkData);
 	//unlink("./images/walk.ppm");
 	//-------------------------------------------------------------------------
@@ -295,49 +331,67 @@ int checkKeys(XEvent *e)
 		return 0;
 	}
 	(void)shift;
-	switch (key) {
-		case XK_a:
-			//for(int i =0; i < 300 ; i++) 
+	if(inMainMenu) {
+		if (key == XK_Return) {
+			if (menuPosition == 1) {
+				inMainMenu = false;
+				inGame = true;
+			}
+		} else if (key == XK_Down || key == XK_s) {
+			if (menuPosition != 2) {
+				menuPosition++;
+			}
+		} else if (key == XK_Up || key == XK_w) {
+			if (menuPosition != 1) {
+				menuPosition--;
+			}
+		}	
+	}
+	if(inGame) {
+		switch (key) {
+			case XK_a:
+				//for(int i =0; i < 300 ; i++) 
 				ShootBullets(g,b,timers);
-			break;
-		case XK_w:
-			timers.recordTime(&timers.walkTime);
-			g.walk ^= 1;
-			break;
-		case XK_Left:
-			moveBack(g);
-			flip = true;
-			//g.xres -= 5;
-			//extern void moveForward(Global&);
-			//moveForward(g);
-			break;
-		case XK_Right:
-			moveForward(g);
-			flip = false;
-			break;
-		case XK_Up:
-			//g.yres += 10;
-			//moveup;
-			//g.walkFrame += 5;
-			//extern void movecharUp(Global&);
-			movecharUp(g);
-			break;
-		case XK_Down:
-			//extern void movecharDown(Global&);
-			movecharDown(g);
-			//g.yres -= 10;
-			break;
-		case XK_equal:
-			g.delay -= 0.005;
-			if (g.delay < 0.005)
-				g.delay = 0.005;
-			break;
-		case XK_minus:
-			g.delay += 0.005;
-			break;
-		case XK_Escape:
-			return 1;
-			break;
+				break;
+			case XK_w:
+				timers.recordTime(&timers.walkTime);
+				g.walk ^= 1;
+				break;
+			case XK_Left:
+				moveBack(g);
+				flip = true;
+				//g.xres -= 5;
+				//extern void moveForward(Global&);
+				//moveForward(g);
+				break;
+			case XK_Right:
+				moveForward(g);
+				flip = false;
+				break;
+			case XK_Up:
+				//g.yres += 10;
+				//moveup;
+				//g.walkFrame += 5;
+				//extern void movecharUp(Global&);
+				movecharUp(g);
+				break;
+			case XK_Down:
+				//extern void movecharDown(Global&);
+				movecharDown(g);
+				//g.yres -= 10;
+				break;
+			case XK_equal:
+				g.delay -= 0.005;
+				if (g.delay < 0.005)
+					g.delay = 0.005;
+				break;
+			case XK_minus:
+				g.delay += 0.005;
+				break;
+			case XK_Escape:
+				return 1;
+				break;
+		}
 	}
 	return 0;
 }
@@ -382,7 +436,7 @@ void physics(void)
 			if (g.walkFrame >= 16)
 				g.walkFrame -= 16;
 			timers.recordTime(&timers.walkTime);
-                //UpdateBulletpos(b,g);
+			//UpdateBulletpos(b,g);
 
 		}
 		UpdateBulletpos(b,g,timers);
@@ -407,126 +461,144 @@ void render(void)
 	glClear(GL_COLOR_BUFFER_BIT);
 	float cx = g.xres/14.0;
 	float cy = g.yres/2.0;
-	//
-	//show ground
-	glBegin(GL_QUADS);
-	glColor3f(0.2, 0.2, 0.2);
-	glVertex2i(0,       280);
-	glVertex2i(g.gxres, 280);
-	glColor3f(0.4, 0.4, 0.4);
-	glVertex2i(g.gxres,   0);
-	glVertex2i(0,         0);
-	glEnd();
-	//
-	//fake shadow
-	//glColor3f(0.25, 0.25, 0.25);
-	//glBegin(GL_QUADS);
-	//	glVertex2i(cx-60, 150);
-	//	glVertex2i(cx+50, 150);
-	//	glVertex2i(cx+50, 130);
-	//	glVertex2i(cx-60, 130);
-	//glEnd();
-	//
-	//show boxes as background
-	for (int i=0; i<20; i++) {
+	if (inMainMenu) { 
+		int sh = g.yres/2; 
+		int sw = (sh*1.33333);
 		glPushMatrix();
-		glTranslated(g.box[i][0],g.box[i][1],g.box[i][2]);
-		glColor3f(0.2, 0.2, 0.2);
+		glTranslatef(g.xres/2, g.yres/2, 0);
+		glBindTexture(GL_TEXTURE_2D, g.mainMenuTexture);
+		glEnable(GL_ALPHA_TEST);
+		glAlphaFunc(GL_GREATER, 0.0f);
+		glColor4ub(255,255,255,255);
 		glBegin(GL_QUADS);
-		glVertex2i( 0,  0);
-		glVertex2i( 0, 30);
-		glVertex2i(20, 30);
-		glVertex2i(20,  0);
+		glTexCoord2f(0.0f, 1.0f); glVertex2i(-sw,-sh);
+		glTexCoord2f(0.0f, 0.0f); glVertex2i(-sw, sh);
+		glTexCoord2f(1.0f, 0.0f); glVertex2i( sw, sh);
+		glTexCoord2f(1.0f, 1.0f); glVertex2i( sw,-sh);
+		glEnd();
+		glPopMatrix();	
+		extern void mainMenu(const int, const int, GLuint);
+		mainMenu(g.xres, g.yres, g.pointerTexture);
+	} else if (inGame) {
+		//
+		//show ground
+		glBegin(GL_QUADS);
+		glColor3f(0.2, 0.2, 0.2);
+		glVertex2i(0,       280);
+		glVertex2i(g.gxres, 280);
+		glColor3f(0.4, 0.4, 0.4);
+		glVertex2i(g.gxres,   0);
+		glVertex2i(0,         0);
+		glEnd();
+		//
+		//fake shadow
+		//glColor3f(0.25, 0.25, 0.25);
+		//glBegin(GL_QUADS);
+		//	glVertex2i(cx-60, 150);
+		//	glVertex2i(cx+50, 150);
+		//	glVertex2i(cx+50, 130);
+		//	glVertex2i(cx-60, 130);
+		//glEnd();
+		//
+
+		//show boxes as background
+		for (int i=0; i<20; i++) {
+			glPushMatrix();
+			glTranslated(g.box[i][0],g.box[i][1],g.box[i][2]);
+			glColor3f(0.2, 0.2, 0.2);
+			glBegin(GL_QUADS);
+			glVertex2i( 0,  0);
+			glVertex2i( 0, 30);
+			glVertex2i(20, 30);
+			glVertex2i(20,  0);
+			glEnd();
+			glPopMatrix();
+		}
+
+		//walk frame.
+		float h = 40.0;
+		float w = h * 0.5; //0.5 h = 50.0
+		glPushMatrix();
+		glColor3f(1.0, 1.0, 1.0);
+		glBindTexture(GL_TEXTURE_2D, g.walkTexture);
+
+
+
+		glEnable(GL_ALPHA_TEST);
+		glAlphaFunc(GL_GREATER, 0.0f);
+		glColor4ub(255,255,255,255);
+		int ix = g.walkFrame % 4;
+		int iy = 0;
+		if (g.walkFrame >= 4)
+			iy = 1;
+		float tx = (float)ix / 4.0;
+		float ty = (float)iy / 1.0;
+		glBegin(GL_QUADS);
+		glTexCoord2f(tx,      ty+1.0); glVertex2i(flip ? cx+w: cx-w, cy-h);
+		glTexCoord2f(tx,      ty);    glVertex2i(flip ? cx+w: cx-w, cy+h);
+		glTexCoord2f(tx+.220, ty);    glVertex2i(flip ? cx-w: cx+w, cy+h);
+		glTexCoord2f(tx+.220, ty+1.0); glVertex2i(flip ? cx-w: cx+w, cy-h); //cy-h;
+
+		//
+
 		glEnd();
 		glPopMatrix();
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glDisable(GL_ALPHA_TEST);
+
+		//DrawBullets
+		//extern void Drawbullets(Bullet*, Global&);
+		Bullet * b = NULL;
+		Drawbullets(b,g);
+
+		// Menu
+
+		int topright = 600;
+		unsigned int c = 0x00ffff44;
+		r.bot = topright - 20;
+		r.left = 10;
+		r.center = 0;
+		//ggprint8b(&r, 16, c, "W   Walk cycle");
+		ggprint8b(&r, 16, c, "+   faster");
+		ggprint8b(&r, 16, c, "-   slower");
+		ggprint8b(&r, 16, c, "right arrow -> walk right");
+		ggprint8b(&r, 16, c, "left arrow  <- walk left");
+		//ggprint8b(&r, 16, c, "frame: %i", g.walkFrame);
+		ggprint8b(&r, 16, c, "Time left: ");
+		ggprint8b(&r, 16, c, "Targets Eliminated: ");
+
+		//Names of Group members lab5
+		//extern void displayTimeFunc(int x, int y, double (&x)(double));
+		extern void displayGameName(int x, int y, const char* name);
+		/*extern void displayName (const char* name,int x , int y);
+		  extern void displayName(int x, int y, float r, float g, float b, const char *text);
+		  displayName(200, 200, 256, 0, 0, "Dirk Duclos");
+		  displayName("Omar Gonzalez", 100, 100);
+		  displayGameName(300, 50, "Marcel Furdui");
+		//displayTimeFunc(300, 50, &calc());
+		 */
+
+		// Dirk Duclos
+		//Function to draw box for colission detection
+		//extern void drawShape(int, int);
 
 
+		//drawShape(cx+200, cy+150);
+		//setBackground();
 
+		//Omar Gonzalez
+		//Profiling Function
+		//First test
+		/*draw();
+		//Optimized Fuinction
+		draw2();
+		 */
+		//Amir
+		/*TimeFunc();
+
+		  extern void timeCount();
+		  timeCount();
+		 */
 	}
-
-	//walk frame.
-	float h = 40.0;
-	float w = h * 0.5; //0.5 h = 50.0
-	glPushMatrix();
-	glColor3f(1.0, 1.0, 1.0);
-	glBindTexture(GL_TEXTURE_2D, g.walkTexture);
-
-
-
-	glEnable(GL_ALPHA_TEST);
-	glAlphaFunc(GL_GREATER, 0.0f);
-	glColor4ub(255,255,255,255);
-	int ix = g.walkFrame % 4;
-	int iy = 0;
-	if (g.walkFrame >= 4)
-		iy = 1;
-	float tx = (float)ix / 4.0;
-	float ty = (float)iy / 1.0;
-	glBegin(GL_QUADS);
-	glTexCoord2f(tx,      ty+1.0); glVertex2i(flip ? cx+w: cx-w, cy-h);
-	glTexCoord2f(tx,      ty);    glVertex2i(flip ? cx+w: cx-w, cy+h);
-	glTexCoord2f(tx+.220, ty);    glVertex2i(flip ? cx-w: cx+w, cy+h);
-	glTexCoord2f(tx+.220, ty+1.0); glVertex2i(flip ? cx-w: cx+w, cy-h); //cy-h;
-
-	//
-
-	glEnd();
-	glPopMatrix();
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glDisable(GL_ALPHA_TEST);
-
-	//DrawBullets
-	//extern void Drawbullets(Bullet*, Global&);
-	Bullet * b = NULL;
-	Drawbullets(b,g);
-
-	// Menu
-
-        int topright = 600;
-	unsigned int c = 0x00ffff44;
-	r.bot = topright - 20;
-	r.left = 10;
-	r.center = 0;
-	//ggprint8b(&r, 16, c, "W   Walk cycle");
-	ggprint8b(&r, 16, c, "+   faster");
-	ggprint8b(&r, 16, c, "-   slower");
-	ggprint8b(&r, 16, c, "right arrow -> walk right");
-	ggprint8b(&r, 16, c, "left arrow  <- walk left");
-	//ggprint8b(&r, 16, c, "frame: %i", g.walkFrame);
-	ggprint8b(&r, 16, c, "Time left: ");
-	ggprint8b(&r, 16, c, "Targets Eliminated: ");
-
-	//Names of Group members lab5
-	//extern void displayTimeFunc(int x, int y, double (&x)(double));
-	extern void displayGameName(int x, int y, const char* name);
-	/*extern void displayName (const char* name,int x , int y);
-	  extern void displayName(int x, int y, float r, float g, float b, const char *text);
-	  displayName(200, 200, 256, 0, 0, "Dirk Duclos");
-	  displayName("Omar Gonzalez", 100, 100);
-	  displayGameName(300, 50, "Marcel Furdui");
-	//displayTimeFunc(300, 50, &calc());
-	 */
-
-	// Dirk Duclos
-	//Function to draw box for colission detection
-	//extern void drawShape(int, int);
-
-
-	//drawShape(cx+200, cy+150);
-	//setBackground();
-
-	//Omar Gonzalez
-	//Profiling Function
-	//First test
-	/*draw();
-	//Optimized Fuinction
-	draw2();
-	 */
-	//Amir
-	/*TimeFunc();
-
-	  extern void timeCount();
-	  timeCount();
-	 */
 }
 

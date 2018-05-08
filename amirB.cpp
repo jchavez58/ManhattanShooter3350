@@ -12,12 +12,70 @@
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 #include <GL/glx.h>
+#include "fonts.h"
+#include "game.h"
 
 using namespace std;
 
+extern bool inGame;
+extern bool inMainMenu;
+extern int menuPosition;
+extern int key; 
+
+
+void mainMenu(const int, const int);
+
+
+void mainMenu(const int xres, const int yres, GLuint texture) { 
+	/*Rect mm;
+	  mm.bot = yres - 650;
+	  mm.left = xres/2 - 55;
+	  mm.center = 0;
+	  ggprint12(&mm, 16, 0xffffff, "Play Game");
+	 */
+	int arrowX;
+	int arrowY;
+
+	if (menuPosition == 1) {
+		arrowX = xres/2 - 160;
+		arrowY = 313;
+	} else if (menuPosition == 2) {
+		arrowX = xres/2 - 73;
+		arrowY = 200;
+	}
+
+	float sh = 20.0;
+	float sw = sh*1.666667;
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glPushMatrix();
+	glTranslatef(arrowX, arrowY, 0);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0.0f);
+	glColor4ub(255,255,255,255);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f); glVertex2i(-sw,-sh);
+	glTexCoord2f(0.0f, 0.0f); glVertex2i(-sw, sh);
+	glTexCoord2f(1.0f, 0.0f); glVertex2i( sw, sh);
+	glTexCoord2f(1.0f, 1.0f); glVertex2i( sw,-sh);
+	glEnd();
+	glPopMatrix();	
+
+	/*
+	   glColor4ub(255, 255, 255, 255);
+	   glBegin(GL_QUADS);
+	   glTexCoord2f(0.0f, 1.0f); glVertex2i( sw, sh);
+	   glTexCoord2f(1.0f, 1.0f); glVertex2i( sw,-sh);
+	   glTexCoord2f(1.0f, 0.0f); glVertex2i(-sw,-sh);
+	   glTexCoord2f(0.0f, 0.0f); glVertex2i(-sw, sh);
+	   glEnd();
+	   glPopMatrix();
+	 */
+}
+/*
 // Prototypes
 void main_menu(int, int);
-void tutorial(int, int);
+void tutorial(int,* int);
 void credits(int, int);
 void mainmenu(GLuint, int, int);
 void rWithoutAlpha(GLuint, int, int);
@@ -28,124 +86,125 @@ unsigned int red = 0xff0000
 
 void main_menu(int xres, int yres)
 {
-    int highlight_x;
-    int highlight_y;
+int highlight_x;
+int highlight_y;
 
-    if (gl.menu_position == 1)
-        {
-            highlight_x = xres/2;
-            highlight_y = yres*0.4;
-        }
-        else if (gl.menu_position == 2)
-        {
-            highlight_x = xres/2;
-            highlight_y = yres*0.3;
-        }
-        else if (gl.menu_position == 3)
-        {
-            highlight_x = xres/2;
-            highlight_y = yres*0.2;
-        }
-        else if (gl.menu_position == 4)
-        {
-            highlight_x = xres/2;
-            highlight_y = yres*0.1;
-        }
+if (gl.menu_position == 1)
+{
+highlight_x = xres/2;
+highlight_y = yres*0.4;
+}
+else if (gl.menu_position == 2)
+{
+highlight_x = xres/2;
+highlight_y = yres*0.3;
+}
+else if (gl.menu_position == 3)
+{
+highlight_x = xres/2;
+highlight_y = yres*0.2;
+}
+else if (gl.menu_position == 4)
+{
+highlight_x = xres/2;
+highlight_y = yres*0.1;
+}
 
-    // Main Menu Background
-    rWithoutAlpha(gl.mainmenuBackground, gl.xres, gl.yres);
+// Main Menu Background
+rWithoutAlpha(gl.mainmenuBackground, gl.xres, gl.yres);
 
-    if (gl.keys[XK_Return])
-        {
-        if (gl.menu_position == 1)
-            {
-                gl.display_startgame = true;
-                gl.keys[XK_Return] = false;
-            }
-            else if (gl.menu_position == 2)
-            {
-                gl.display_startgame = false;
-                gl.display_tutorial = true;
-                gl.keys[XK_Return] = false;
-            }
-            else if (gl.menu_position == 3)
-            {
-                gl.display_startgame = false;
-                gl.display_credits = true;
-            }
-            else if (gl.menu_position == 4)
-            {
-                gl.display_startgame = false;
-                gl.done = 1;
-            }
-        }
+if (gl.keys[XK_Return])
+{
+if (gl.menu_position == 1)
+{
+gl.display_startgame = true;
+gl.keys[XK_Return] = false;
+}
+else if (gl.menu_position == 2)
+{
+gl.display_startgame = false;
+gl.display_tutorial = true;
+gl.keys[XK_Return] = false;
+}
+else if (gl.menu_position == 3)
+{
+gl.display_startgame = false;
+gl.display_credits = true;
+}
+else if (gl.menu_position == 4)
+{
+gl.display_startgame = false;
+gl.done = 1;
+}
+}
 
 void mainmenu(GLuint texture, int xres, int yres)
 {
-    glPushMatrix();
-    glColor3f(1 ,1 ,1);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glBegin(GL_QUADS);
-    glTexCoord2f(0.0, 0.0); glVertex2i(0,0);
-    glTexCoord2f(0.0, 0.0); glVertex2i(0,yres);
-    glTexCoord2f(0.0, 0.0); glVertex2i(xres,yres);
-    glTexCoord2f(0.0, 0.0); glVertex2i(xres,0);
-    glEnd();
-    glPopMatrix();
+glPushMatrix();
+glColor3f(1 ,1 ,1);
+glBindTexture(GL_TEXTURE_2D, texture);
+glBegin(GL_QUADS);
+glTexCoord2f(0.0, 0.0); glVertex2i(0,0);
+glTexCoord2f(0.0, 0.0); glVertex2i(0,yres);
+glTexCoord2f(0.0, 0.0); glVertex2i(xres,yres);
+glTexCoord2f(0.0, 0.0); glVertex2i(xres,0);
+glEnd();
+glPopMatrix();
 }
 }
 
 void credits(int xres, int yres)
 {
-    // Background from main menu
+	// Background from main menu
 
-    glPushMatrix();
-    glColor3f(1.0,1.0,1.0);
-    glBindTexture(GL_TEXTURE_2D, gl.mainmenuBackground);
-    glAlphaFunc(GL_GREATER, 0.0f);
-    glColor4ub(242,242,242,242);
-    glBegin(GL_QUADS);
-    glTexCoord2f(0.0, 1.0); glVertex2i(0,0);
-    glTexCoord2f(0.0, 0.0); glVertex2i(0,yres);
-    glTexCoord2f(1.0, 0.0); glVertex2i(xres,yres);
-    glTexCoord2f(1.0, 1.0); glVertex2i(xres,0);
-    glEnd();
-    glPopMatrix();
+	glPushMatrix();
+	glColor3f(1.0,1.0,1.0);
+	glBindTexture(GL_TEXTURE_2D, gl.mainmenuBackground);
+	glAlphaFunc(GL_GREATER, 0.0f);
+	glColor4ub(242,242,242,242);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0, 1.0); glVertex2i(0,0);
+	glTexCoord2f(0.0, 0.0); glVertex2i(0,yres);
+	glTexCoord2f(1.0, 0.0); glVertex2i(xres,yres);
+	glTexCoord2f(1.0, 1.0); glVertex2i(xres,0);
+	glEnd();
+	glPopMatrix();
 
-    Rect r;
+	Rect r;
 
-    r.bot = yres*.69;
-    r.left = xres/2;
-    r.center = yres/2;
+	r.bot = yres*.69;
+	r.left = xres/2;
+	r.center = yres/2;
 
-    //unsigned int red = 0xff0000
-    ggprint40(&r, 16, red, "The Homies");
-    ggprint12(&r, 16, red, "                                                                        ");
-    ggprint40(&r, 16, red, "Partner 1 - fill in person's role here");
-    ggprint12(&r, 16, red, "                                                                        ");
-    ggprint40(&r, 16, red, "Amir");
-    ggprint12(&r, 16, red, "                                                                        ");
-    ggprint40(&r, 16, red, "Partner 2");
-    ggprint12(&r, 16, red, "                                                                        ");
-    ggprint40(&r, 16, red, "Dirk aka Rhaekon");
-    ggprint12(&r, 16, red, "                                                                        ");
-    ggprint40(&r, 16, red, "Partner 3");
-    ggprint12(&r, 16, red, "                                                                        ");
-    ggprint40(&r, 16, red, "Omar da GOAT");
-    ggprint12(&r, 16, red, "                                                                        ");
-    ggprint40(&r, 16, red, "Partner 4");
-    ggprint12(&r, 16, red, "                                                                        ");
-    ggprint40(&r, 16, red, "Princess Kenny the legend");
-    ggprint12(&r, 16, red, "                                                                        ");
+	//unsigned int red = 0xff0000
+	ggprint40(&r, 16, red, "The Homies");
+	ggprint12(&r, 16, red, "                                                                        ");
+	ggprint40(&r, 16, red, "Partner 1 - fill in person's role here");
+	ggprint12(&r, 16, red, "                                                                        ");
+	ggprint40(&r, 16, red, "Amir");
+	ggprint12(&r, 16, red, "                                                                        ");
+	ggprint40(&r, 16, red, "Partner 2");
+	ggprint12(&r, 16, red, "                                                                        ");
+	ggprint40(&r, 16, red, "Dirk aka Rhaekon");
+	ggprint12(&r, 16, red, "                                                                        ");
+	ggprint40(&r, 16, red, "Partner 3");
+	ggprint12(&r, 16, red, "                                                                        ");
+	ggprint40(&r, 16, red, "Omar da GOAT");
+	ggprint12(&r, 16, red, "                                                                        ");
+	ggprint40(&r, 16, red, "Partner 4");
+	ggprint12(&r, 16, red, "                                                                        ");
+	ggprint40(&r, 16, red, "Princess Kenny the legend");
+	ggprint12(&r, 16, red, "                                                                        ");
 
 
-    if (gl.keys[XK_Return])
-        {
-        if (gl.display_credits)
-        {
-            gl.display_credits = false;
-            gl.display_mainmenu = true;
-            gl.keys[XK_Return] = false;
-        }
-    }
+	if (gl.keys[XK_Return])
+	{
+		if (gl.display_credits)
+		{
+			gl.display_credits = false;
+			gl.display_mainmenu = true;
+			gl.keys[XK_Return] = false;
+		}
+	}
 }
+*/
