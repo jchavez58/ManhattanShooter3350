@@ -136,7 +136,7 @@ class Global {
                         yres=600;
 			gxres = 800;
 			gyres=  600;
-                        center= (xres*yres)/2;
+                        center= (xres/yres)*2;
 			walk=0;
                         walkFrame=0;
                         delay = 0.1;

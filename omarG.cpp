@@ -17,6 +17,8 @@
 #include "fonts.h"
 //#include "Sprite.cpp"
 #include "game.h"
+#include <iostream>
+using namespace std;
 //defined types
 typedef double Flt;
 typedef double Vec[3];
@@ -104,10 +106,10 @@ void ShootBullets(Global &g, Bullet *b, Timers & h)
                                 //Bullet *b = new Bullet;
                                 b = &g.barr[g.nbullets];
                                 h.timeCopy(&b->time, &bt);
-                                b->pos[0] = g.xres/14.0;
-                                b->pos[1] = g.xres/14.0;
-                                b->vel[0] = g.yres/2.0;
-                                b->vel[1] = g.yres/2.0;
+                                 b->pos[0] = g.xres;//g.xres/14.0;
+                                //b->pos[1] = //g.yres*g.yres;//g.xres/14.0;
+                                b->vel[0] = g.center+5;//g.yres/2.0;
+                                b->vel[1] = g.center+5;//g.yres/2.0;
                                 
 				
 				//convert man angle to radians
@@ -115,10 +117,10 @@ void ShootBullets(Global &g, Bullet *b, Timers & h)
                                 //convert angle to a vector
                                 //Flt xdir = cos(rad);
                                 //Flt ydir = sin(rad);
-                                b->pos[0] += g.center; //* 20.0f;
-                                b->pos[1] += g.center; //* 20.0f;
-                                b->vel[0] += g.center; //* 20.0f;
-                                b->vel[1] += g.center; //* 20.0f;
+                               // b->pos[0] += g.center; //* 20.0f;
+                                //b->pos[1] += g.center; //* 20.0f;
+                                //b->vel[0] += g.center; //* 20.0f;
+                               // b->vel[1] += g.center; //* 20.0f;
                                 
 				b->color[0] = 1.0f;
                                 b->color[1] = 1.0f;
@@ -126,7 +128,9 @@ void ShootBullets(Global &g, Bullet *b, Timers & h)
                                 g.nbullets++;
                         }
                 }
-
+cout << "Center: " << g.center << endl; 
+cout << "x: " << g.xres << endl;
+cout << "y: " << g.yres << endl;
 }
 
 
