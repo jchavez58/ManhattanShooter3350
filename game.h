@@ -125,6 +125,8 @@ class Global {
 		Vec vel;
 		double delay;
                 GLuint walkTexture;
+                GLuint mainMenuTexture;
+		GLuint pointerTexture;
                 Vec box[20];
 		Bullet *barr;
 		int nbullets;
