@@ -18,6 +18,9 @@
 #include <GL/glx.h>
 #include "fonts.h"
 #include "game.h"
+#include <iostream>
+
+using namespace std;
 
 //defined types
 //typedef double Flt;
@@ -48,6 +51,10 @@ extern void detectCharWallColission(int,int,Global&);
 //extern void draw2();
 //extern void TimeFunc();
 //extern setBackground();
+
+extern void initSounds();
+extern void uninitSounds();
+extern void makeSoundTest();
 
 bool inMainMenu = true;
 bool inGame = false;
@@ -285,7 +292,7 @@ void initOpengl(void)
 }
 
 void init() {
-
+	initSounds();
 }
 
 void checkMouse(XEvent *e)
@@ -353,6 +360,7 @@ int checkKeys(XEvent *e)
 			case XK_a:
 				//for(int i =0; i < 300 ; i++)
 				ShootBullets(g,b,timers);
+				makeSoundTest();
 				break;
 			case XK_w:
 				timers.recordTime(&timers.walkTime);
