@@ -1,10 +1,16 @@
-/* Author: Dirk Duclos
+/*********************************/
+/*
+
+Author: Dirk Duclos
+Last Modified: 5/8/18
 
 Tasks Assigned:
   1. Colission detection
   2. Basic AI for mafia
 
 */
+/*********************************/
+
 #include"fonts.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,40 +23,63 @@ Tasks Assigned:
 #include <GL/glx.h>
 #include <ctime>
 #include <sstream>
-#include "Sprite.cpp"
+#include <iostream>
+//#include "Sprite.cpp"
+#include "game.h"
+using namespace std;
 
-/*const double oobillion = 1.0 / 1e9;
-extern double timeDiff(struct timespec *start, struct timespec *end);
-*/
+//defined types
+typedef double Flt;
+typedef double Vec[3];
+typedef Flt	Matrix[4][4];
 
-extern void Destroy(character&);
-// vector
-//struct Vec {
-//	float x, y, z;
+#define PI 3.141592653589793
+#define ALPHA 1
+const float GRAVITY =  -0.2f;
 
-//};
+//extern void Destroy(character&);
+
 // make an object to check for colission
 struct Shape {
-        float width, height;
+  float width, height;
 	float radius;
 	Vec center;
 	struct timespec end;
 } s;
 
-//Check for colission
-//<<<<<<< HEAD
-/*
-void detectCursorColission(int cx, int cy, int posx, int posy, character &g)
+//Check for character colission with window edges
+void detectCharWallColission(int posx, int posy, Global &g)
 {
-
-    if (cx == posx || cy == posy) {
-    Destroy(g);
+    if (posx <= 100 && posy >= 620) {
+    g.xres = 100;
+    g.yres = 620;
+    }
+    else if (posx <= 100 && posy <= 80) {
+    g.xres = 100;
+    g.yres = 80;
+    }
+    else if (posx <= 100) {
+    g.xres = 100;
+    }
+    else if (posx >= 11000 && posy >= 620) {
+    g.xres = 11000;
+    g.yres = 620;
+    }
+    else if (posx >= 11000 && posy <= 80) {
+    g.xres = 11000;
+    g.yres = 80;
+    }
+    else if (posx >= 11000) {
+    g.xres = 11000;
+    }
+    else if (posy <= 80) {
+    g.yres = 80;
+    }
+    else if (posy >= 620) {
+    g.yres = 620;
     }
 }
-*/
-//=======
 
-//>>>>>>> 48b43b09306bd01a22084af96af4994e8ca1f6ed
 void drawBox(int x,int y, int posx, int posy, int posz)
 {
     glPushMatrix();

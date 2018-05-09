@@ -43,6 +43,7 @@ extern void movecharUp(Global&);
 extern void movecharDown(Global&);
 extern void moveForward(Global&);
 extern void moveBack(Global&);
+extern void detectCharWallColission(int,int,Global&);
 //extern voindraw();
 //extern void draw2();
 //extern void TimeFunc();
@@ -345,12 +346,12 @@ int checkKeys(XEvent *e)
 			if (menuPosition != 1) {
 				menuPosition--;
 			}
-		}	
+		}
 	}
 	if(inGame) {
 		switch (key) {
 			case XK_a:
-				//for(int i =0; i < 300 ; i++) 
+				//for(int i =0; i < 300 ; i++)
 				ShootBullets(g,b,timers);
 				break;
 			case XK_w:
@@ -359,6 +360,7 @@ int checkKeys(XEvent *e)
 				break;
 			case XK_Left:
 				moveBack(g);
+        detectCharWallColission(g.xres, g.yres,g);
 				flip = true;
 				//g.xres -= 5;
 				//extern void moveForward(Global&);
@@ -366,6 +368,7 @@ int checkKeys(XEvent *e)
 				break;
 			case XK_Right:
 				moveForward(g);
+        detectCharWallColission(g.xres, g.yres,g);
 				flip = false;
 				break;
 			case XK_Up:
@@ -374,10 +377,12 @@ int checkKeys(XEvent *e)
 				//g.walkFrame += 5;
 				//extern void movecharUp(Global&);
 				movecharUp(g);
+				detectCharWallColission(g.xres, g.yres,g);
 				break;
 			case XK_Down:
 				//extern void movecharDown(Global&);
 				movecharDown(g);
+				detectCharWallColission(g.xres, g.yres,g);
 				//g.yres -= 10;
 				break;
 			case XK_equal:
@@ -417,7 +422,7 @@ Flt VecNormalize(Vec vec)
 extern void UpdateBulletpos(Bullet*, Global&, Timers&);
 //Timers t;
 void physics(void)
-{        
+{
 	Bullet *b = NULL;
 	if (g.walk) {
 		//man is walking...
@@ -461,8 +466,8 @@ void render(void)
 	glClear(GL_COLOR_BUFFER_BIT);
 	float cx = g.xres/14.0;
 	float cy = g.yres/2.0;
-	if (inMainMenu) { 
-		int sh = g.yres/2; 
+	if (inMainMenu) {
+		int sh = g.yres/2;
 		int sw = (sh*1.33333);
 		glPushMatrix();
 		glTranslatef(g.xres/2, g.yres/2, 0);
@@ -476,7 +481,7 @@ void render(void)
 		glTexCoord2f(1.0f, 0.0f); glVertex2i( sw, sh);
 		glTexCoord2f(1.0f, 1.0f); glVertex2i( sw,-sh);
 		glEnd();
-		glPopMatrix();	
+		glPopMatrix();
 		extern void mainMenu(const int, const int, GLuint);
 		mainMenu(g.xres, g.yres, g.pointerTexture);
 	} else if (inGame) {
@@ -601,4 +606,3 @@ void render(void)
 		 */
 	}
 }
-
