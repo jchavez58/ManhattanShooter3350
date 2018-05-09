@@ -128,6 +128,8 @@ class Global {
 	GLuint walkTexture;
 	GLuint mainMenuTexture;
 	GLuint pointerTexture;
+	GLuint tutorialTexture;
+	GLuint creditsTexture;
 	Vec box[20];
 	Bullet *barr;
 	int nbullets;

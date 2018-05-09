@@ -22,28 +22,27 @@ extern bool inMainMenu;
 extern int menuPosition;
 extern int key; 
 
+void renderPointer(const int, GLuint);
+void renderMainMenu(const int, const int, GLuint);
+void renderTutorial(const int, const int, GLuint);
+void renderCredits(const int, const int, GLuint);
 
-void mainMenu(const int, const int);
-
-
-void mainMenu(const int xres, const int yres, GLuint texture) { 
-	/*Rect mm;
-	  mm.bot = yres - 650;
-	  mm.left = xres/2 - 55;
-	  mm.center = 0;
-	  ggprint12(&mm, 16, 0xffffff, "Play Game");
-	 */
+void renderPointer(const int xres, GLuint texture) { 
 	int arrowX;
 	int arrowY;
-
 	if (menuPosition == 1) {
-		arrowX = xres/2 - 160;
-		arrowY = 313;
+		arrowX = xres/2 - 165;
+		arrowY = 345;
 	} else if (menuPosition == 2) {
-		arrowX = xres/2 - 73;
-		arrowY = 200;
+		arrowX = xres/2 - 130;
+		arrowY = 295;
+	} else if (menuPosition == 3) {
+		arrowX = xres/2 - 130;
+		arrowY = 245;
+	} else if (menuPosition == 4) {
+		arrowX = xres/2 - 100;
+		arrowY = 195;
 	}
-
 	float sh = 20.0;
 	float sw = sh*1.666667;
 	glColor3f(1.0f, 1.0f, 1.0f);
@@ -60,18 +59,62 @@ void mainMenu(const int xres, const int yres, GLuint texture) {
 	glTexCoord2f(1.0f, 1.0f); glVertex2i( sw,-sh);
 	glEnd();
 	glPopMatrix();	
+}
 
-	/*
-	   glColor4ub(255, 255, 255, 255);
+void renderMainMenu(const int xres, const int yres, GLuint texture) { 
+	   int sh = yres/2;
+	   int sw = (sh*1.33333);
+	   glPushMatrix();
+	   glTranslatef(xres/2, yres/2, 0);
+	   glBindTexture(GL_TEXTURE_2D, texture);
+	   glEnable(GL_ALPHA_TEST);
+	   glAlphaFunc(GL_GREATER, 0.0f);
+	   glColor4ub(255,255,255,255);
 	   glBegin(GL_QUADS);
-	   glTexCoord2f(0.0f, 1.0f); glVertex2i( sw, sh);
-	   glTexCoord2f(1.0f, 1.0f); glVertex2i( sw,-sh);
-	   glTexCoord2f(1.0f, 0.0f); glVertex2i(-sw,-sh);
+	   glTexCoord2f(0.0f, 1.0f); glVertex2i(-sw,-sh);
 	   glTexCoord2f(0.0f, 0.0f); glVertex2i(-sw, sh);
+	   glTexCoord2f(1.0f, 0.0f); glVertex2i( sw, sh);
+	   glTexCoord2f(1.0f, 1.0f); glVertex2i( sw,-sh);
 	   glEnd();
 	   glPopMatrix();
-	 */
 }
+
+void renderTutorial(const int xres, const int yres, GLuint texture) { 
+	   int sh = yres/2;
+	   int sw = (sh*1.33333);
+	   glPushMatrix();
+	   glTranslatef(xres/2, yres/2, 0);
+	   glBindTexture(GL_TEXTURE_2D, texture);
+	   glEnable(GL_ALPHA_TEST);
+	   glAlphaFunc(GL_GREATER, 0.0f);
+	   glColor4ub(255,255,255,255);
+	   glBegin(GL_QUADS);
+	   glTexCoord2f(0.0f, 1.0f); glVertex2i(-sw,-sh);
+	   glTexCoord2f(0.0f, 0.0f); glVertex2i(-sw, sh);
+	   glTexCoord2f(1.0f, 0.0f); glVertex2i( sw, sh);
+	   glTexCoord2f(1.0f, 1.0f); glVertex2i( sw,-sh);
+	   glEnd();
+	   glPopMatrix();
+}
+
+void renderCredits(const int xres, const int yres, GLuint texture) { 
+	   int sh = yres/2;
+	   int sw = (sh*1.33333);
+	   glPushMatrix();
+	   glTranslatef(xres/2, yres/2, 0);
+	   glBindTexture(GL_TEXTURE_2D, texture);
+	   glEnable(GL_ALPHA_TEST);
+	   glAlphaFunc(GL_GREATER, 0.0f);
+	   glColor4ub(255,255,255,255);
+	   glBegin(GL_QUADS);
+	   glTexCoord2f(0.0f, 1.0f); glVertex2i(-sw,-sh);
+	   glTexCoord2f(0.0f, 0.0f); glVertex2i(-sw, sh);
+	   glTexCoord2f(1.0f, 0.0f); glVertex2i( sw, sh);
+	   glTexCoord2f(1.0f, 1.0f); glVertex2i( sw,-sh);
+	   glEnd();
+	   glPopMatrix();
+}
+
 /*
 // Prototypes
 void main_menu(int, int);
