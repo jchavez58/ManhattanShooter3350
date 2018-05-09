@@ -75,21 +75,28 @@ const float GRAVITY =  -0.2f;
 void movecharUp(Global &g)
 {
 	g.yres += 20;
-
+	//updatecenter
+        g.centery += 20;
 }
 
 void movecharDown(Global &g)
 {
 	g.yres -= 20;
+	//Updatecenter
+	g.centery -= 20;
 }
 
 void moveForward(Global &g)
 {
 	g.xres += 100;
+	//Updatecenter
+	g.centerx += 100;
 }
 void moveBack(Global &g)
 {
 	g.xres -= 100;
+	//update center
+	g.centerx -= 100;
 }
 
 void ShootBullets(Global &g, Bullet *b, Timers & h)
@@ -106,10 +113,10 @@ void ShootBullets(Global &g, Bullet *b, Timers & h)
                                 //Bullet *b = new Bullet;
                                 b = &g.barr[g.nbullets];
                                 h.timeCopy(&b->time, &bt);
-                                 b->pos[0] = g.xres;//g.xres/14.0;
-                                //b->pos[1] = //g.yres*g.yres;//g.xres/14.0;
-                                b->vel[0] = g.center+5;//g.yres/2.0;
-                                b->vel[1] = g.center+5;//g.yres/2.0;
+                                b->pos[0] = g.xres/14.0;
+                                b->pos[1] = g.yres/2.0;
+                                b->vel[0] = 10;//g.centerx+5;//g.yres/2.0;
+                                b->vel[1] = 0;//g.centerx-5;//g.yres/2.0;
                                 
 				
 				//convert man angle to radians
@@ -128,7 +135,8 @@ void ShootBullets(Global &g, Bullet *b, Timers & h)
                                 g.nbullets++;
                         }
                 }
-cout << "Center: " << g.center << endl; 
+cout << "Center x: " << g.centerx << endl; 
+cout << "Center y: " << g.centery << endl; 
 cout << "x: " << g.xres << endl;
 cout << "y: " << g.yres << endl;
 }

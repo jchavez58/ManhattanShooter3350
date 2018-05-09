@@ -536,8 +536,8 @@ void render(void)
 		glBegin(GL_QUADS);
 		glTexCoord2f(tx,      ty+1.0); glVertex2i(flip ? cx+w: cx-w, cy-h);
 		glTexCoord2f(tx,      ty);    glVertex2i(flip ? cx+w: cx-w, cy+h);
-		glTexCoord2f(tx+.220, ty);    glVertex2i(flip ? cx-w: cx+w, cy+h);
-		glTexCoord2f(tx+.220, ty+1.0); glVertex2i(flip ? cx-w: cx+w, cy-h); //cy-h;
+		glTexCoord2f(tx+.240, ty);    glVertex2i(flip ? cx-w: cx+w, cy+h);
+		glTexCoord2f(tx+.240, ty+1.0); glVertex2i(flip ? cx-w: cx+w, cy-h); //cy-h;
 
 		//
 
