@@ -441,6 +441,8 @@ int checkKeys(XEvent *e)
 	    case XK_a:
 		//for(int i =0; i < 300 ; i++)
 		ShootBullets(g,b,timers);
+                //extern void detectBullEnemyColission(double,double,int,int,Bullet*, Global&);
+		//detectBullEnemyColission(b->pos[0], b->pos[1], g.exres, g.eyres, b, g);
 		makeSoundTest();
 		break;
 	    case XK_w:
