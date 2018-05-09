@@ -122,6 +122,10 @@ class Global {
 	int walkFrame;
 	int centerx;
 	int centery;
+	int exres;
+	int eyres;
+	int menuxres;
+        int menuyres;
 	Vec pos;
 	Vec vel;
 	double delay;
@@ -130,6 +134,7 @@ class Global {
 	GLuint pointerTexture;
 	GLuint tutorialTexture;
 	GLuint creditsTexture;
+	GLuint alienTexture;
 	Vec box[20];
 	Bullet *barr;
 	int nbullets;
@@ -141,6 +146,10 @@ class Global {
 	    yres=600;
 	    gxres = 800;
 	    gyres=  600;
+	    exres = 800;
+	    eyres = 600;
+	    menuxres = 800;
+	    menuyres = 600;
 	    centerx= xres;
 	    centery= yres;
 	    walk=0;

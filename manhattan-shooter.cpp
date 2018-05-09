@@ -47,6 +47,21 @@ extern void movecharDown(Global&);
 extern void moveForward(Global&);
 extern void moveBack(Global&);
 extern void detectCharWallColission(int,int,Global&);
+extern void EnemyLoop(Global&);
+extern void spawnEnemy(Global&, const float, const float);
+extern float RandomizeEnemyPosx();
+extern float moveEnemy(Global&);
+extern float RandomizeEnemyPosx();
+float res= RandomizeEnemyPosx();
+float res1= RandomizeEnemyPosx();
+float res2= RandomizeEnemyPosx();
+float res3= RandomizeEnemyPosx();
+float res4= RandomizeEnemyPosx();
+
+
+
+
+
 //extern voindraw();
 //extern void draw2();
 //extern void TimeFunc();
@@ -71,7 +86,7 @@ int menuPosition = 1;
 
 Image img[] = {"images/walk_left.png","images/Background.jpg",
     "images/menu11.png", "images/pointer.png",
-    "images/tutorial.png", "images/credits.png"};
+    "images/tutorial.png", "images/credits.png", "images/alien.png"};
 //-----------------------------------------------------------------------------
 //Setup timers
 Timers timers;
@@ -250,6 +265,7 @@ void initOpengl(void)
     //
     //create opengl texture elements
     glGenTextures(1, &g.walkTexture);
+    glGenTextures(1, &g.alienTexture);
     glGenTextures(1, &g.mainMenuTexture);
     glGenTextures(1, &g.pointerTexture);
     glGenTextures(1, &g.tutorialTexture);
@@ -267,6 +283,22 @@ void initOpengl(void)
     unsigned char *walkData = buildAlphaData(&img[0]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
 	    GL_RGBA, GL_UNSIGNED_BYTE, walkData);
+    
+
+
+
+    glBindTexture(GL_TEXTURE_2D, g.alienTexture);
+    //
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+    //
+    //must build a new set of data...
+    unsigned char *alienData = buildAlphaData(&img[6]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+	    GL_RGBA, GL_UNSIGNED_BYTE, alienData);
+
+
+
 
     w = 1024;
     h = 768;
@@ -503,10 +535,17 @@ void physics(void)
 
 	}
 	UpdateBulletpos(b,g,timers);
+	moveEnemy(g);
+	EnemyLoop(g);
+	if ( (g.xres == g.eyres) ||  (g.yres == g.exres))
+	{
+		cout << "Hit Enemy " << endl;
+	}
+
 	for (int i=0; i<20; i++) {
 	    g.box[i][0] -= 2.0 * (0.05 / g.delay);
 	    if (g.box[i][0] < -10.0)
-		g.box[i][0] += g.xres + 10.0;
+		g.box[i][0] += g.gxres +10.0;
 
 	}
     }
@@ -518,17 +557,17 @@ void render(void)
 {
     Rect r;
     //Clear the screen
-    glClearColor(0.1, 0.1, 0.1, 1.0);
+    glClearColor(0.0, 0.0, 1.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
     float cx = g.xres/14.0;
     float cy = g.yres/2.0;
     if (inMainMenu) {
-	renderMainMenu(g.xres, g.yres, g.mainMenuTexture);
-	renderPointer(g.xres, g.pointerTexture);
+	renderMainMenu(g.menuxres, g.menuyres, g.mainMenuTexture);
+	renderPointer(g.menuxres, g.pointerTexture);
     } else if (inTutorial) {
-	renderTutorial(g.xres, g.yres, g.tutorialTexture);
+	renderTutorial(g.menuxres, g.menuyres, g.tutorialTexture);
     } else if (inCredits) {
-	renderCredits(g.xres, g.yres, g.creditsTexture);
+	renderCredits(g.menuxres, g.menuyres, g.creditsTexture);
     } else if (inGame) {
 	//
 	//show ground
@@ -555,7 +594,7 @@ void render(void)
 	for (int i=0; i<20; i++) {
 	    glPushMatrix();
 	    glTranslated(g.box[i][0],g.box[i][1],g.box[i][2]);
-	    glColor3f(0.2, 0.2, 0.2);
+	    glColor3f(0.0, 0.1, 0.0);
 	    glBegin(GL_QUADS);
 	    glVertex2i( 0,  0);
 	    glVertex2i( 0, 30);
@@ -566,7 +605,7 @@ void render(void)
 	}
 
 	//walk frame.
-	float h = 40.0;
+	float h = 30.0;
 	float w = h * 0.5; //0.5 h = 50.0
 	glPushMatrix();
 	glColor3f(1.0, 1.0, 1.0);
@@ -588,6 +627,38 @@ void render(void)
 	glTexCoord2f(tx+.240, ty+1.0); glVertex2i(flip ? cx-w: cx+w, cy-h); //cy-h;
 
 	//
+       // glEnd();
+	//glPopMatrix();
+	//glBindTexture(GL_TEXTURE_2D, 0);
+	//glDisable(GL_ALPHA_TEST);
+
+	glPushMatrix();
+	glColor3f(1.0, 1.0, 1.0);
+	glBindTexture(GL_TEXTURE_2D, g.alienTexture);
+
+	//glEnable(GL_ALPHA_TEST);
+	//glAlphaFunc(GL_GREATER, 0.0f);
+	//glColor4ub(255,255,255,255);
+
+	
+	//for(int i = 0; i < 5; i++) {
+	spawnEnemy(g,0.9,res);
+	spawnEnemy(g,0.9,res1);
+        spawnEnemy(g,0.9,res2); 
+	spawnEnemy(g,0.9,res3);
+	spawnEnemy(g,0.9,res4);
+	//
+	spawnEnemy(g,0.9,res+2.0);
+	spawnEnemy(g,0.9,res1+2.0);
+        spawnEnemy(g,0.9,res2+2.0); 
+	spawnEnemy(g,0.9,res3+2.0);
+	spawnEnemy(g,0.9,res4+2.0);
+	//
+        spawnEnemy(g,0.9,res+3.5);
+	spawnEnemy(g,0.9,res1+3.5);
+        spawnEnemy(g,0.9,res2+3.5); 
+	spawnEnemy(g,0.9,res3+3.5);
+	spawnEnemy(g,0.9,res4+3.5);
 
 	glEnd();
 	glPopMatrix();
