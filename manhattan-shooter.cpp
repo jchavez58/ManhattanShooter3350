@@ -47,7 +47,7 @@ extern void movecharDown(Global&);
 extern void moveForward(Global&);
 extern void moveBack(Global&);
 extern void detectCharWallColission(int,int,Global&); //dirkD
-extern void detectBullEnemyColission(Bullet*); //dirkD
+//extern void detectBullEnemyColission(Bullet*); //dirkD
 extern void EnemyLoop(Global&);
 extern void spawnEnemy(Global&, const float, const float);
 extern float RandomizeEnemyPosx();
@@ -594,8 +594,8 @@ void physics(void)
 
 	}
 	UpdateBulletpos(b,g,timers);
-  Bullet *b = g.barr;
-  detectBullEnemyColission(b);
+  //Bullet *b = g.barr;
+  //detectBullEnemyColission(b);
 	moveEnemy(g);
 	EnemyLoop(g);
 	spawnEnemy(g,0.9,2.0);
