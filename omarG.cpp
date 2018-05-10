@@ -1,6 +1,6 @@
 //Author: Omar Gonzalez
 //Date: 03/05/2018
-//File contains code for sprite animations and texture mapping 
+//File contains code for sprite animations and texture mapping
 //Edit: Will now take care of some collision detection and some physics, maybe menu?
 
 #include <stdio.h>
@@ -44,9 +44,9 @@ void EnemyLoop(Global &g)
 }
 
 void spawnEnemy(Global &g, const float posx, const float posy)
-{                   
+{
     tl.recordTime(&tl.timeCurrent);
-    double totalTime = tl.timeDiff(&tl.walkTime, &tl.timeCurrent); 
+    double totalTime = tl.timeDiff(&tl.walkTime, &tl.timeCurrent);
     double time = 1.5 - totalTime;
     int minutes = time / 60.0;
     int seconds = time / 60 * 60.0;
@@ -66,11 +66,15 @@ void spawnEnemy(Global &g, const float posx, const float posy)
 
     float h = 30.0;
     float w = h * 0.5; //0.5 h = 50.0
+
     glPushMatrix();
     glColor3f(1.0, 1.0, 1.0);
     glBindTexture(GL_TEXTURE_2D, g.alienTexture);
 
-
+    //putting boxes around enemies for setting up col. det.
+    extern void drawBox(int,int);
+    drawBox(cx,cy);
+    /*************************/
 
     glEnable(GL_ALPHA_TEST);
     glAlphaFunc(GL_GREATER, 0.0f);
@@ -81,21 +85,24 @@ void spawnEnemy(Global &g, const float posx, const float posy)
 	iy = 1;
     float tx = (float)ix / 4.0;
     float ty = (float)iy / 1.0;
-
-    glBegin(GL_QUADS);    
+    glBegin(GL_QUADS);
 
     glTexCoord2f(tx,      ty+1.0); glVertex2i(cx+w, cy-h);
     glTexCoord2f(tx,      ty);    glVertex2i(cx+w, cy+h);
     glTexCoord2f(tx+.240, ty);    glVertex2i(cx-w, cy+h);
     glTexCoord2f(tx+.240, ty+1.0); glVertex2i(cx-w, cy-h); //cy-h;
 
+    glEnd();
+
+
+
     /* glTexCoord2f(0.0f, 1.0f); glVertex2i(-50, -50);
        glTexCoord2f(0.0f, 0.0f);    glVertex2i(-50, 50);
        glTexCoord2f(1.0f, 0.0f);    glVertex2i(50, 50);
-       glTexCoord2f(1.0f, 1.0f); glVertex2i(50, -50); 
+       glTexCoord2f(1.0f, 1.0f); glVertex2i(50, -50);
        */
-    glEnd();
     glPopMatrix();
+
     glBindTexture(GL_TEXTURE_2D, 0);
     glDisable(GL_ALPHA_TEST);
 
@@ -182,8 +189,8 @@ void ShootBullets(Global &g, Bullet *b, Timers & h)
 	    g.nbullets++;
 	}
     }
-    cout << "Center x: " << g.centerx << endl; 
-    cout << "Center y: " << g.centery << endl; 
+    cout << "Center x: " << g.centerx << endl;
+    cout << "Center y: " << g.centery << endl;
     cout << "x: " << g.xres << endl;
     cout << "y: " << g.yres << endl;
 }
@@ -346,4 +353,4 @@ void draw2()
     r.left = 250;
 
     ggprint16(&r, 16, 0x0ffff00, "Function Time 2 Omar Gonzalez: %f ", time);
-} 
+}

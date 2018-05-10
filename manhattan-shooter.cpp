@@ -46,7 +46,8 @@ extern void movecharUp(Global&);
 extern void movecharDown(Global&);
 extern void moveForward(Global&);
 extern void moveBack(Global&);
-extern void detectCharWallColission(int,int,Global&);
+extern void detectCharWallColission(int,int,Global&); //dirkD
+extern void detectBullEnemyColission(Bullet*); //dirkD
 extern void EnemyLoop(Global&);
 extern void spawnEnemy(Global&, const float, const float);
 extern float RandomizeEnemyPosx();
@@ -270,8 +271,8 @@ void initOpengl(void)
     //
     int w = img[0].width;
     int h = img[0].height;
-    
-    
+
+
 
     //
     //create opengl texture elements
@@ -286,22 +287,22 @@ void initOpengl(void)
     //silhouette
     //this is similar to a sprite graphic
     //
-/*   
+/*
 glBindTexture(GL_TEXTURE_2D, g.backTexture);
         unsigned char *backData = buildAlphaData(&img[7]);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, 
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
 		GL_RGBA, GL_UNSIGNED_BYTE, backData);
- 
+
      g.xc[0] = 0.0;
      g.xc[1] = 0.25;
      g.yc[0] = 0.0;
-     g.yc[1] = 1.0; 
-    
-  */  
-    
-    
+     g.yc[1] = 1.0;
+
+  */
+
+
     glBindTexture(GL_TEXTURE_2D, g.walkTexture);
     //
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
@@ -311,7 +312,7 @@ glBindTexture(GL_TEXTURE_2D, g.backTexture);
     unsigned char *walkData = buildAlphaData(&img[0]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
 	    GL_RGBA, GL_UNSIGNED_BYTE, walkData);
-    
+
 
 
 
@@ -379,14 +380,14 @@ glBindTexture(GL_TEXTURE_2D, g.backTexture);
         unsigned char *backData = buildAlphaData(&img[7]);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, 
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
 		GL_RGBA, GL_UNSIGNED_BYTE, backData);
- 
+
      g.xc[0] = 0.0;
      g.xc[1] = 0.25;
      g.yc[0] = 0.0;
-     g.yc[1] = 1.0; 
-    
+     g.yc[1] = 1.0;
+
     //free(walkData);
     //unlink("./images/walk.ppm");
     //-------------------------------------------------------------------------
@@ -481,6 +482,7 @@ int checkKeys(XEvent *e)
 	}
     }
     if(inGame) {
+
 	switch (key) {
 	    case XK_a:
 		//for(int i =0; i < 300 ; i++)
@@ -488,8 +490,6 @@ int checkKeys(XEvent *e)
       ShootBullets(g,b,timers);
       --g.magazine;
       }
-                //extern void detectBullEnemyColission(double,double,int,int,Bullet*, Global&);
-		//detectBullEnemyColission(b->pos[0], b->pos[1], g.exres, g.eyres, b, g);
 		makeSoundTest();
 		break;
       case XK_r:
@@ -533,7 +533,7 @@ int checkKeys(XEvent *e)
 		    g.delay = 0.005;
 	//g.xc[0] = 7000.0;
 	//g.xc[1] = 7000.0;
-    
+
 		break;
 	    case XK_minus:
 		g.delay += 0.005;
@@ -583,17 +583,19 @@ void physics(void)
 	    //With each frame, update x position of walk frame
 	    //Need to change walk frame to be just image
 	    //g.xres += 5;
-             
+
 	    if (g.walkFrame >= 16)
 		g.walkFrame -= 16;
 	    timers.recordTime(&timers.walkTime);
-	    
-	    
-	    
+
+
+
 	    //UpdateBulletpos(b,g);
 
 	}
 	UpdateBulletpos(b,g,timers);
+  Bullet *b = g.barr;
+  detectBullEnemyColission(b);
 	moveEnemy(g);
 	EnemyLoop(g);
 	spawnEnemy(g,0.9,2.0);
@@ -604,7 +606,7 @@ void physics(void)
 	{
 		cout << "Hit Enemy " << endl;
 	}
-        
+
 	for (int i=0; i<20; i++) {
 	    g.box[i][0] -= 2.0 * (0.05 / g.delay);
 	    if (g.box[i][0] < -10.0)
@@ -655,7 +657,7 @@ void render(void)
 	//
 
 	//show boxes as background
-	
+
 	//for (int i=0; i<20; i++) {
 	    /*
 	    glPushMatrix();
@@ -668,10 +670,10 @@ void render(void)
 	    glVertex2i(20,  0);
 	    glEnd();
 	    glPopMatrix();
-	*/ 
+	*/
         //glClear(GL_COLOR_BUFFER_BIT);
         glColor3f(1.0, 1.0, 1.0);
-        
+
 	glBindTexture(GL_TEXTURE_2D, g.backTexture);
         glBegin(GL_QUADS);
               	glTexCoord2f(g.xc[0], g.yc[1]); glVertex2i(0, 280);
@@ -679,7 +681,7 @@ void render(void)
           	glTexCoord2f(g.xc[1], g.yc[0]); glVertex2i(g.bxres, g.byres);
         	glTexCoord2f(g.xc[1], g.yc[1]); glVertex2i(g.bxres, 280);
         glEnd();
-        
+
 
 	//walk frame.
 	float h = 30.0;
@@ -697,8 +699,9 @@ void render(void)
 	    iy = 1;
 	float tx = (float)ix / 4.0;
 	float ty = (float)iy / 1.0;
-	glBegin(GL_QUADS);
-	glTexCoord2f(tx,      ty+1.0); glVertex2i(flip ? cx+w: cx-w, cy-h);
+  glColor3f(1.0, 1.0, 1.0);
+  glBegin(GL_QUADS);
+  glTexCoord2f(tx,      ty+1.0); glVertex2i(flip ? cx+w: cx-w, cy-h);
 	glTexCoord2f(tx,      ty);    glVertex2i(flip ? cx+w: cx-w, cy+h);
 	glTexCoord2f(tx+.240, ty);    glVertex2i(flip ? cx-w: cx+w, cy+h);
 	glTexCoord2f(tx+.240, ty+1.0); glVertex2i(flip ? cx-w: cx+w, cy-h); //cy-h;
@@ -729,80 +732,80 @@ void render(void)
                 glTexCoord2f(g.xc[1], g.yc[1]); glVertex2i(g.bxres, 300);
         glEnd();
         */
-         
-	
+
+
 	//for(int i = 0; i < 5; i++) {
 	for(int i = 0; i < 16; i++) {
-	
-        //srand((unsigned int)time(NULL)); 
+
+        //srand((unsigned int)time(NULL));
 	//float res =  ( ((float)rand()/(float)(RAND_MAX)) * .10)+ 0.9;
 	spawnEnemy(g,0.9,2.0);
-	//if(g.exres < 0.0) 
+	//if(g.exres < 0.0)
 	spawnEnemy(g,0.7,3.5);
         //if(g.exres < 0.0)
-	spawnEnemy(g,0.6,6.5); 
+	spawnEnemy(g,0.6,6.5);
 	//if(g.exres < 0.0)
 	spawnEnemy(g,0.5,12.5);
-	
+
 	spawnEnemy(g,0.9,14.5);
         ////////////////////////
 
         spawnEnemy(g,0.9,3.0);
-	//if(g.exres < 0.0) 
+	//if(g.exres < 0.0)
 	spawnEnemy(g,0.7,4.5);
         //if(g.exres < 0.0)
-	spawnEnemy(g,0.6,2.5); 
+	spawnEnemy(g,0.6,2.5);
 	//if(g.exres < 0.0)
 	spawnEnemy(g,0.5,14.5);
-	
+
 	spawnEnemy(g,0.9,14.5);
         /////////////////////////////
         //spawnEnemy(g,res,3.0);
-	//if(g.exres < 0.0) 
+	//if(g.exres < 0.0)
 	//spawnEnemy(g,res,4.5);
         //if(g.exres < 0.0)
-	//spawnEnemy(g,res,2.5); 
+	//spawnEnemy(g,res,2.5);
 	//if(g.exres < 0.0)
 	//spawnEnemy(g,res,14.5);
-	
+
 	//spawnEnemy(g,res,14.5);
-    
+
 
      //srand((unsigned int)time(NULL));
-    
+
     //float a = 16.0;
     //for (int i=0;i<20;i++)
     //float res =  ( ((float)rand()/(float)(RAND_MAX)) * i)+ 2.0;
     //return res;
-  
+
 
 
 	//spawnEnemy(g,0.9,i);
-	//if(g.exres < 0.0) 
+	//if(g.exres < 0.0)
 	//spawnEnemy(g,0.7,i);
         //if(g.exres < 0.0)
-	//spawnEnemy(g,0.6,i); 
+	//spawnEnemy(g,0.6,i);
 	//if(g.exres < 0.0)
 	//spawnEnemy(g,0.5,i);
-	
+
 	//spawnEnemy(g,0.9,i);
 }
 	//if(g.exres == 0.0)
-	//spawnEnemy(g,0.9,14.5);	
+	//spawnEnemy(g,0.9,14.5);
 
 	//spawnEnemy(g,0.9,res4);
 	//
 	/*
 	spawnEnemy(g,0.9,res+2.0);
 	spawnEnemy(g,0.9,res1+2.0);
-        spawnEnemy(g,0.9,res2+2.0); 
+        spawnEnemy(g,0.9,res2+2.0);
 	spawnEnemy(g,0.9,res3+2.0);
 	spawnEnemy(g,0.9,res4+2.0);
 	*/
         /*
 	spawnEnemy(g,0.9,res+3.5);
 	spawnEnemy(g,0.9,res1+3.5);
-        spawnEnemy(g,0.9,res2+3.5); 
+        spawnEnemy(g,0.9,res2+3.5);
 	spawnEnemy(g,0.9,res3+3.5);
 	spawnEnemy(g,0.9,res4+3.5);
 	*/

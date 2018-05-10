@@ -43,7 +43,8 @@ const float GRAVITY =  -0.2f;
 struct Shape {
   float width, height;
 	float radius;
-	Vec center;
+	int centerx;
+  int centery;
 	struct timespec end;
 } s;
 
@@ -79,30 +80,29 @@ void detectCharWallColission(int posx, int posy, Global &g)
     g.yres = 620;
     }
 }
-/*
-void detectBullEnemyColission(double bullx, double bully, int ex, int ey, Bullet *bu, Global &g)
+
+void detectBullEnemyColission(Bullet *b)
 {
-
-    //if (bullx == ex && bully == ey)
-   // {
-     //  --g.nbullets;
-     //  g.exres = 11000;
-     //  g.eyres = 620;
- 
-//    }
-
+    cout << "bullet pos x: " << (int)b->pos[0] << endl;
+    cout << "shape x: " << s.centerx << endl;
+    if (b->pos[0] == s.centerx)
+    {
+      cout << "bullet hit" << endl;
+    }
 }
-*/
-void drawBox(int x,int y, int posx, int posy, int posz)
+
+void drawBox(int x,int y)
 {
-    glPushMatrix();
-    glTranslatef(posx, posy, posz);
-    glColor3f(0.0f, 0.0f, 1.0f); // Let it be blue
-    glBegin(GL_LINE_STRIP); // 2x2 pixels
-    glVertex2f(-x+250, -y+310);
-    glVertex2f(-x+250, y-310);
-    glVertex2f(x-250, y-310);
-    glVertex2f(x-250, -y+310);
-    glEnd();
-    glPopMatrix();
+  s.centerx = x;
+  s.centery = y;
+  glPushMatrix();
+  glTranslatef(x, y, 0);
+  glColor3f(0.0f, 0.0f, 1.0f); // Let it be blue
+  glBegin(GL_LINE_STRIP); // 2x2 pixels
+  glVertex2f(-10, -10);
+  glVertex2f(-10, 10);
+  glVertex2f(10, 10);
+  glVertex2f(10, -10);
+  glEnd();
+  glPopMatrix();
 }
