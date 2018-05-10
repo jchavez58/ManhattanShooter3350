@@ -28,22 +28,39 @@ typedef Flt	Matrix[4][4];
 #define ALPHA 1
 const float GRAVITY =  -0.2f;
 extern bool flip;
+Timers tl;
 
 void EnemyLoop(Global &g)
 {
-	if (g.exres == 0) {
-		cout << "off Screen" << endl;
-		while (!g.exres) {
-			g.exres = g.gxres/0.9;
-			g.exres = g.exres/0.9;
-		}
-		g.exres = g.exres/0.9;
+    if (g.exres == 0) {
+	cout << "off Screen" << endl;
+	while (!g.exres) {
+	    g.exres = g.gxres/0.9;
+	    g.exres = g.exres/0.9;
 	}
+	g.exres = g.exres/0.9;
+    }
 
 }
 
 void spawnEnemy(Global &g, const float posx, const float posy)
 {                   
+    tl.recordTime(&tl.timeCurrent);
+    double totalTime = tl.timeDiff(&tl.walkTime, &tl.timeCurrent); 
+    double time = 1.5 - totalTime;
+    int minutes = time / 60.0;
+    int seconds = time / 60 * 60.0;
+    int ms = (time/ 60*60 - seconds) * 100;
+    unsigned int color = 0x00ffffff;
+    Rect r;
+    r.bot = 40;
+    r.left = 20;
+    r.center = 0;
+    char buffer[256];
+    sprintf(buffer, "%d:%02d:%2d", minutes, seconds, ms);
+    //ggprint16(&r, 16, color, buffer);
+
+    flip = false;
     int cx = g.exres/posx;
     int cy = g.eyres/posy;
 
@@ -61,18 +78,27 @@ void spawnEnemy(Global &g, const float posx, const float posy)
     int ix = g.walkFrame % 4;
     int iy = 0;
     if (g.walkFrame >= 4)
-        iy = 1;
+	iy = 1;
     float tx = (float)ix / 4.0;
     float ty = (float)iy / 1.0;
+
     glBegin(GL_QUADS);    
+
     glTexCoord2f(tx,      ty+1.0); glVertex2i(cx+w, cy-h);
     glTexCoord2f(tx,      ty);    glVertex2i(cx+w, cy+h);
     glTexCoord2f(tx+.240, ty);    glVertex2i(cx-w, cy+h);
     glTexCoord2f(tx+.240, ty+1.0); glVertex2i(cx-w, cy-h); //cy-h;
-    // g.exres -= 20;
-    //if (g.exres == 11000) {
-    //  cx = g.exres/0.9;
-    //}
+
+    /* glTexCoord2f(0.0f, 1.0f); glVertex2i(-50, -50);
+       glTexCoord2f(0.0f, 0.0f);    glVertex2i(-50, 50);
+       glTexCoord2f(1.0f, 0.0f);    glVertex2i(50, 50);
+       glTexCoord2f(1.0f, 1.0f); glVertex2i(50, -50); 
+       */
+    glEnd();
+    glPopMatrix();
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_ALPHA_TEST);
+
 }
 
 float RandomizeEnemyPosx()
@@ -81,7 +107,7 @@ float RandomizeEnemyPosx()
 
     float a = 16.0;
     //for (int i=0;i<20;i++)
-    float res =  ( ((float)rand()/(float)(RAND_MAX)) * a)+ 1.99;
+    float res =  ( ((float)rand()/(float)(RAND_MAX)) * a)+ 2.0;
     return res;
 }
 
@@ -95,71 +121,71 @@ void moveEnemy(Global &g)
 
 void movecharUp(Global &g)
 {
-	g.yres += 20;
-	//updatecenter
-	g.centery += 20;
+    g.yres += 20;
+    //updatecenter
+    g.centery += 20;
 }
 
 void movecharDown(Global &g)
 {
-	g.yres -= 20;
-	//Updatecenter
-	g.centery -= 20;
+    g.yres -= 20;
+    //Updatecenter
+    g.centery -= 20;
 }
 
 void moveForward(Global &g)
 {
-	g.xres += 100;
-	//Updatecenter
-	g.centerx += 100;
+    g.xres += 100;
+    //Updatecenter
+    g.centerx += 100;
 }
 void moveBack(Global &g)
 {
-	g.xres -= 100;
-	//update center
-	g.centerx -= 100;
+    g.xres -= 100;
+    //update center
+    g.centerx -= 100;
 }
 
 void ShootBullets(Global &g, Bullet *b, Timers & h)
 {
 
-	//a little time between each bullet
-	struct timespec bt;
-	clock_gettime(CLOCK_REALTIME, &bt);
-	double ts = h.timeDiff(&g.bulletTimer, &bt);
-	if (ts > 0.1) {
-		h.timeCopy(&g.bulletTimer, &bt);
-		if (g.nbullets < 20) {
-			//shoot a bullet...
-			//Bullet *b = new Bullet;
-			b = &g.barr[g.nbullets];
-			h.timeCopy(&b->time, &bt);
-			b->pos[0] = g.xres/14.0;
-			b->pos[1] = g.yres/2.0;
-			b->vel[0] = 10;//g.centerx+5;//g.yres/2.0;
-			b->vel[1] = 0;//g.centerx-5;//g.yres/2.0;
+    //a little time between each bullet
+    struct timespec bt;
+    clock_gettime(CLOCK_REALTIME, &bt);
+    double ts = h.timeDiff(&g.bulletTimer, &bt);
+    if (ts > 0.1) {
+	h.timeCopy(&g.bulletTimer, &bt);
+	if (g.nbullets < 20) {
+	    //shoot a bullet...
+	    //Bullet *b = new Bullet;
+	    b = &g.barr[g.nbullets];
+	    h.timeCopy(&b->time, &bt);
+	    b->pos[0] = g.xres/14.0;
+	    b->pos[1] = g.yres/2.0;
+	    b->vel[0] = 10;//g.centerx+5;//g.yres/2.0;
+	    b->vel[1] = 0;//g.centerx-5;//g.yres/2.0;
 
 
-			//convert man angle to radians
-			//Flt rad = ((g.xres+90.0) / 360.0f) * PI * 2.0;
-			//convert angle to a vector
-			//Flt xdir = cos(rad);
-			//Flt ydir = sin(rad);
-			// b->pos[0] += g.center; //* 20.0f;
-			//b->pos[1] += g.center; //* 20.0f;
-			//b->vel[0] += g.center; //* 20.0f;
-			// b->vel[1] += g.center; //* 20.0f;
+	    //convert man angle to radians
+	    //Flt rad = ((g.xres+90.0) / 360.0f) * PI * 2.0;
+	    //convert angle to a vector
+	    //Flt xdir = cos(rad);
+	    //Flt ydir = sin(rad);
+	    // b->pos[0] += g.center; //* 20.0f;
+	    //b->pos[1] += g.center; //* 20.0f;
+	    //b->vel[0] += g.center; //* 20.0f;
+	    // b->vel[1] += g.center; //* 20.0f;
 
-			b->color[0] = 1.0f;
-			b->color[1] = 1.0f;
-			b->color[2] = 1.0f;
-			g.nbullets++;
-		}
+	    b->color[0] = 1.0f;
+	    b->color[1] = 1.0f;
+	    b->color[2] = 1.0f;
+	    g.nbullets++;
 	}
-	cout << "Center x: " << g.centerx << endl; 
-	cout << "Center y: " << g.centery << endl; 
-	cout << "x: " << g.xres << endl;
-	cout << "y: " << g.yres << endl;
+    }
+    cout << "Center x: " << g.centerx << endl; 
+    cout << "Center y: " << g.centery << endl; 
+    cout << "x: " << g.xres << endl;
+    cout << "y: " << g.yres << endl;
 }
 
 
@@ -168,75 +194,75 @@ void ShootBullets(Global &g, Bullet *b, Timers & h)
 void Drawbullets(Bullet *b, Global &g)
 {
 
-	b = &g.barr[0];
-	for (int i=0; i<g.nbullets; i++) {
-		//Log("draw bullet...\n");
-		glColor3f(1.0, 1.0, 1.0);
-		glBegin(GL_POINTS);
-		glVertex2f(b->pos[0],      b->pos[1]);
-		glVertex2f(b->pos[0]-1.0f, b->pos[1]);
-		glVertex2f(b->pos[0]+1.0f, b->pos[1]);
-		glVertex2f(b->pos[0],      b->pos[1]-1.0f);
-		glVertex2f(b->pos[0],      b->pos[1]+1.0f);
-		glColor3f(0.8, 0.8, 0.8);
-		glVertex2f(b->pos[0]-1.0f, b->pos[1]-1.0f);
-		glVertex2f(b->pos[0]-1.0f, b->pos[1]+1.0f);
-		glVertex2f(b->pos[0]+1.0f, b->pos[1]-1.0f);
-		glVertex2f(b->pos[0]+1.0f, b->pos[1]+1.0f);
-		glEnd();
-		++b;
-	}
+    b = &g.barr[0];
+    for (int i=0; i<g.nbullets; i++) {
+	//Log("draw bullet...\n");
+	glColor3f(1.0, 1.0, 1.0);
+	glBegin(GL_POINTS);
+	glVertex2f(b->pos[0],      b->pos[1]);
+	glVertex2f(b->pos[0]-1.0f, b->pos[1]);
+	glVertex2f(b->pos[0]+1.0f, b->pos[1]);
+	glVertex2f(b->pos[0],      b->pos[1]-1.0f);
+	glVertex2f(b->pos[0],      b->pos[1]+1.0f);
+	glColor3f(0.8, 0.8, 0.8);
+	glVertex2f(b->pos[0]-1.0f, b->pos[1]-1.0f);
+	glVertex2f(b->pos[0]-1.0f, b->pos[1]+1.0f);
+	glVertex2f(b->pos[0]+1.0f, b->pos[1]-1.0f);
+	glVertex2f(b->pos[0]+1.0f, b->pos[1]+1.0f);
+	glEnd();
+	++b;
+    }
 
 }
 
 void UpdateBulletpos(Bullet *b, Global &a, Timers &g)
 {
-	struct timespec bt;
-	clock_gettime(CLOCK_REALTIME, &bt);
-	int i=0;
-	while (i < a.nbullets) {
-		b = &a.barr[i];
-		//How long has bullet been alive?
-		double ts = g.timeDiff(&b->time, &bt);
-		if (ts > 2.5) {
-			//time to delete the bullet.
-			memcpy(&a.barr[i], &a.barr[a.nbullets-1],
-					sizeof(Bullet));
-			a.nbullets--;
-			//do not increment i.
-			continue;
-		}
-		//move the bullet
-		b->pos[0] += b->vel[0];
-		b->pos[1] += b->vel[1];
-		//Check for collision with window edges
-		/*
-		   if (b->pos[0] < 0.0) {
-		   b->pos[0] += (float)a.xres;
-		   }
-		   else if (b->pos[0] > (float)a.xres) {
-		   b->pos[0] -= (float)a.xres;
-		   }
-		   else if (b->pos[1] < 0.0) {
-		   b->pos[1] += (float)a.yres;
-		   }
-		   else if (b->pos[1] > (float)a.yres) {
-		   b->pos[1] -= (float)a.yres;
-		   }
-		 */
-		i++;
+    struct timespec bt;
+    clock_gettime(CLOCK_REALTIME, &bt);
+    int i=0;
+    while (i < a.nbullets) {
+	b = &a.barr[i];
+	//How long has bullet been alive?
+	double ts = g.timeDiff(&b->time, &bt);
+	if (ts > 2.5) {
+	    //time to delete the bullet.
+	    memcpy(&a.barr[i], &a.barr[a.nbullets-1],
+		    sizeof(Bullet));
+	    a.nbullets--;
+	    //do not increment i.
+	    continue;
 	}
+	//move the bullet
+	b->pos[0] += b->vel[0];
+	b->pos[1] += b->vel[1];
+	//Check for collision with window edges
+	/*
+	   if (b->pos[0] < 0.0) {
+	   b->pos[0] += (float)a.xres;
+	   }
+	   else if (b->pos[0] > (float)a.xres) {
+	   b->pos[0] -= (float)a.xres;
+	   }
+	   else if (b->pos[1] < 0.0) {
+	   b->pos[1] += (float)a.yres;
+	   }
+	   else if (b->pos[1] > (float)a.yres) {
+	   b->pos[1] -= (float)a.yres;
+	   }
+	   */
+	i++;
+    }
 
 }
 
 void displayMenu (const char* mess, int x, int y) {
-	//Object that handles rendering of text
-	Rect r;
-	//Position of text entered as x and y
-	r.bot = x;
-	r.left = y;
-	//Print name to screen
-	ggprint16(&r, 16, 0x0ffff00, mess);
+    //Object that handles rendering of text
+    Rect r;
+    //Position of text entered as x and y
+    r.bot = x;
+    r.left = y;
+    //Print name to screen
+    ggprint16(&r, 16, 0x0ffff00, mess);
 }
 
 
@@ -249,75 +275,75 @@ extern double timeDiff(struct timespec *start, struct timespec *end);
 extern void timeCopy(struct timespec *dest, struct timespec *source);
 
 
-/*
-   void draw()
-   {
-   static double time = 0.0;
-   struct timespec start, end;
-   clock_gettime(CLOCK_REALTIME, &start);
 
-   glBegin(GL_TRIANGLES);
-   glColor3f(0.1,0.2,0.3);
-   glVertex2f(300, 210);
-   glVertex2f(340, 215);
-   glVertex2f(320, 250);
-   glEnd();
-   glPopMatrix();
+void draw()
+{
+    static double time = 0.0;
+    struct timespec start, end;
+    clock_gettime(CLOCK_REALTIME, &start);
 
-   int div =100000;
-   int res = 7890202;
-   for (int i= 0; i < 1000; i++)
-   {
-   int total = div / res;
-   total = total / 12;
-   total = total / 100;
-   }
+    glBegin(GL_TRIANGLES);
+    glColor3f(0.1,0.2,0.3);
+    glVertex2f(300, 210);
+    glVertex2f(340, 215);
+    glVertex2f(320, 250);
+    glEnd();
+    glPopMatrix();
 
-   clock_gettime(CLOCK_REALTIME, &end);
-   time +=  timeDiff(&start, &end);
+    int div =100000;
+    int res = 7890202;
+    for (int i= 0; i < 1000; i++)
+    {
+	int total = div / res;
+	total = total / 12;
+	total = total / 100;
+    }
 
-//text to display time
-Rect r;
+    clock_gettime(CLOCK_REALTIME, &end);
+    time +=  tl.timeDiff(&start, &end);
 
-r.bot = 200;
-r.left = 250;
+    //text to display time
+    Rect r;
 
-ggprint16(&r, 16, 0x0ffff00, "Function Time Omar Gonzalez: %f ", time);
+    r.bot = 200;
+    r.left = 250;
+
+    ggprint16(&r, 16, 0x0ffff00, "Function Time Omar Gonzalez: %f ", time);
 }
 
 
 
 void draw2()
 {
-static double time = 0.0;
-struct timespec start, end;
-clock_gettime(CLOCK_REALTIME, &start);
+    static double time = 0.0;
+    struct timespec start, end;
+    clock_gettime(CLOCK_REALTIME, &start);
 
-glBegin(GL_TRIANGLES);
-glColor3f(0.1,0.2,0.3);
-glVertex2f(300, 210);
-glVertex2f(340, 215);
-glVertex2f(320, 250);
-glEnd();
-glPopMatrix();
+    glBegin(GL_TRIANGLES);
+    glColor3f(0.1,0.2,0.3);
+    glVertex2f(300, 210);
+    glVertex2f(340, 215);
+    glVertex2f(320, 250);
+    glEnd();
+    glPopMatrix();
 
-int div =100000;
-int res = 7890202;
-for (int i= 0; i < 1000; i++)
-{
-int total = (div & res);
-total = (total & 12);
-total = (total & 100);
-}
+    int div =100000;
+    int res = 7890202;
+    for (int i= 0; i < 1000; i++)
+    {
+	int total = (div & res);
+	total = (total & 12);
+	total = (total & 100);
+    }
 
-clock_gettime(CLOCK_REALTIME, &end);
-time +=  timeDiff(&start, &end);
+    clock_gettime(CLOCK_REALTIME, &end);
+    time +=  tl.timeDiff(&start, &end);
 
-//text to display time
-Rect r;
+    //text to display time
+    Rect r;
 
-r.bot = 320;
-r.left = 250;
+    r.bot = 320;
+    r.left = 250;
 
-ggprint16(&r, 16, 0x0ffff00, "Function Time 2 Omar Gonzalez: %f ", time);
-} */
+    ggprint16(&r, 16, 0x0ffff00, "Function Time 2 Omar Gonzalez: %f ", time);
+} 
