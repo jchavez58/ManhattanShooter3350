@@ -91,7 +91,7 @@ int menuPosition = 1;
 //bool inMainMenu = false;
 //bool inMainMenu = false;
 
-Image img[] = {"images/walk_left.png","images/Background.jpg",
+Image img[] = {"images/walk_left.png", "images/Background.jpg",
     "images/menu11.png", "images/pointer.png",
     "images/tutorial.png", "images/credits.png", "images/enemy_left3.png", "images/Background1.jpg"};
 //-----------------------------------------------------------------------------
