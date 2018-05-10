@@ -453,8 +453,7 @@ int checkKeys(XEvent *e)
     if(g.magazine >= 1) {
       ShootBullets(g,b,timers);
       --g.magazine;
-    }
-		ShootBullets(g,b,timers);
+      }
                 //extern void detectBullEnemyColission(double,double,int,int,Bullet*, Global&);
 		//detectBullEnemyColission(b->pos[0], b->pos[1], g.exres, g.eyres, b, g);
 		makeSoundTest();
