@@ -734,8 +734,8 @@ void render(void)
 	//for(int i = 0; i < 5; i++) {
 	for(int i = 0; i < 16; i++) {
 	
-            srand((unsigned int)time(NULL)); 
-	float res =  ( ((float)rand()/(float)(RAND_MAX)) * .10)+ 0.9;
+        //srand((unsigned int)time(NULL)); 
+	//float res =  ( ((float)rand()/(float)(RAND_MAX)) * .10)+ 0.9;
 	spawnEnemy(g,0.9,2.0);
 	//if(g.exres < 0.0) 
 	spawnEnemy(g,0.7,3.5);

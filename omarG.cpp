@@ -53,12 +53,12 @@ void spawnEnemy(Global &g, const float posx, const float posy)
     int ms = (time/ 60*60 - seconds) * 100;
     unsigned int color = 0x00ffffff;
     Rect r;
-    r.bot = 40;
-    r.left = 20;
+    r.bot = 2000;
+    r.left = 10000;
     r.center = 0;
     char buffer[256];
     sprintf(buffer, "%d:%02d:%2d", minutes, seconds, ms);
-    //ggprint16(&r, 16, color, buffer);
+    ggprint16(&r, 16, color, buffer);
 
     flip = false;
     int cx = g.exres/posx;
