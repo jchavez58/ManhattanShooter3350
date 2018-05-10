@@ -86,6 +86,7 @@ class Timers {
 	double oobillion;
 	struct timespec timeStart, timeEnd, timeCurrent;
 	struct timespec walkTime;
+  struct timespec gameTime;
 	Timers() {
 	    physicsRate = 1.0 / 30.0;
 	    oobillion = 1.0 / 1e9;
@@ -140,6 +141,7 @@ class Global {
 	int nbullets;
 	struct timespec bulletTimer;
 	char keys[65536];
+  int magazine;
 	Global() {
 	    done=0;
 	    xres=800;
@@ -162,6 +164,7 @@ class Global {
 	    pos[2] = 0.0f;
 	    vel[0] = xres;
 	    vel[1] = yres;
+      magazine = 7;
 	    for (int i=0; i<20; i++) {
 		box[i][0] = rnd() * xres;
 		box[i][1] = rnd() * (yres-220) + 220.0;
@@ -174,3 +177,4 @@ class Global {
 	~Global(){ delete [] barr;   }
 };
 
+const int game_duration = 60; // seconds
