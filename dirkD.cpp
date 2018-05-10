@@ -83,9 +83,9 @@ void detectCharWallColission(int posx, int posy, Global &g)
 
 void detectBullEnemyColission(Bullet *b)
 {
-    cout << "bullet pos x: " << (int)b->pos[0] << endl;
-    cout << "shape x: " << s.centerx << endl;
-    if (b->pos[0] == s.centerx)
+    //cout << "bullet pos x: " << (int)b->pos[0] << endl;
+    //cout << "shape x: " << s.centerx << endl;
+    if (b->pos[0] == s.centerx && b->pos[1] == s->centery)
     {
       cout << "bullet hit" << endl;
     }
