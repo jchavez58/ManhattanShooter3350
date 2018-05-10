@@ -70,6 +70,13 @@ float res4= RandomizeEnemyPosx();
 extern void initSounds();
 extern void uninitSounds();
 extern void makeSoundTest();
+extern void makeReloadSound();        //marcelF
+extern void renderMagazineCount();    //marcelF
+extern void renderGameTime();         //marcelF
+extern Global g;                      //marcelF
+extern Timers timers;                 //marcelF
+extern bool inGame;                   //marcelF
+
 extern void renderPointer(const int, GLuint);
 extern void renderMainMenu(const int, const int, GLuint);
 extern void renderTutorial(const int, const int, GLuint);
@@ -203,6 +210,7 @@ int main(void)
 
     }
     cleanup_fonts();
+    uninitSounds();
     return 0;
 }
 
@@ -439,6 +447,8 @@ int checkKeys(XEvent *e)
 	    if (menuPosition == 1) {
 		inMainMenu = false;
 		inGame = true;
+        // Start game timer
+        timers.recordTime(&timers.gameTime);
 	    } else if (menuPosition == 2) {
 		inMainMenu = false;
 		inTutorial = true;
@@ -474,11 +484,18 @@ int checkKeys(XEvent *e)
 	switch (key) {
 	    case XK_a:
 		//for(int i =0; i < 300 ; i++)
-		ShootBullets(g,b,timers);
+    if(g.magazine >= 1) {
+      ShootBullets(g,b,timers);
+      --g.magazine;
+      }
                 //extern void detectBullEnemyColission(double,double,int,int,Bullet*, Global&);
 		//detectBullEnemyColission(b->pos[0], b->pos[1], g.exres, g.eyres, b, g);
 		makeSoundTest();
 		break;
+      case XK_r:
+        g.magazine = 7;
+        makeReloadSound();
+  		break;
 	    case XK_w:
 		timers.recordTime(&timers.walkTime);
 		g.walk ^= 1;
@@ -794,6 +811,8 @@ void render(void)
 	Bullet * b = NULL;
 	Drawbullets(b,g);
 
+  renderGameTime();
+  renderMagazineCount();
 	// Menu
 
 	int topright = 600;
