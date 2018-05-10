@@ -5,7 +5,7 @@ LFLAGS = -lrt -lX11 -lGLU -lGL -pthread -lm	-D USE_OPENAL_SOUND \
 
 all: manhattan-shooter
 
-manhattan-shooter:  omarG.cpp dirkD.cpp marcelF.cpp manhattan-shooter.cpp amirB.cpp Sprite.cpp game.h
+manhattan-shooter:  omarG.cpp omarG.h dirkD.cpp marcelF.cpp manhattan-shooter.cpp amirB.cpp Sprite.cpp game.h
 	g++ $(CFLAGS) omarG.cpp dirkD.cpp marcelF.cpp manhattan-shooter.cpp amirB.cpp Sprite.cpp game.h libggfonts.a -Wall -Wextra $(LFLAGS) -o manhattan-shooter
 
 clean:

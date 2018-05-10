@@ -79,7 +79,7 @@ void detectCharWallColission(int posx, int posy, Global &g)
     g.yres = 620;
     }
 }
-
+/*
 void detectBullEnemyColission(double bullx, double bully, int ex, int ey, Bullet *bu, Global &g)
 {
 
@@ -92,7 +92,7 @@ void detectBullEnemyColission(double bullx, double bully, int ex, int ey, Bullet
 //    }
 
 }
-
+*/
 void drawBox(int x,int y, int posx, int posy, int posz)
 {
     glPushMatrix();

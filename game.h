@@ -121,12 +121,15 @@ class Global {
 	int gxres, gyres;
 	int walk;
 	int walkFrame;
+	int eneFrame;
 	int centerx;
 	int centery;
 	int exres;
 	int eyres;
 	int menuxres;
         int menuyres;
+	int bxres;
+	int byres;
 	Vec pos;
 	Vec vel;
 	double delay;
@@ -136,12 +139,18 @@ class Global {
 	GLuint tutorialTexture;
 	GLuint creditsTexture;
 	GLuint alienTexture;
+	GLuint backTexture;
 	Vec box[20];
 	Bullet *barr;
 	int nbullets;
 	struct timespec bulletTimer;
 	char keys[65536];
+
+        float xc[2];
+        float yc[2]; 
+
   int magazine;
+
 	Global() {
 	    done=0;
 	    xres=800;
@@ -150,12 +159,15 @@ class Global {
 	    gyres=  600;
 	    exres = 800;
 	    eyres = 600;
+	    bxres = 800;
+	    byres = 600;
 	    menuxres = 800;
 	    menuyres = 600;
-	    centerx= xres;
-	    centery= yres;
+	    centerx= xres+xres/2;
+	    centery= yres+yres/2;
 	    walk=0;
 	    walkFrame=0;
+	    eneFrame=0;
 	    delay = 0.1;
 	    barr = new Bullet[20];
 	    nbullets = 0;
