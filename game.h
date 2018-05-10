@@ -113,10 +113,30 @@ class Bullet {
 	Bullet() { }
 };
 
+//doubly linked list for enemies
+class Enemy {
+  public:
+    int exres;
+    int eyres;
+    int eneFrame;
+    Vec pos;
+    Vec vel;
+    GLuint alienTexture;
+    struct Enemy *prev;
+    struct Enemy *next;
+
+  public:
+    Enemy() {
+      prev = NULL;
+      next = NULL;
+    };
+};
 
 class Global {
     public:
-	int done;
+  Enemy *ehead; //dirkD
+  int nenemies; //dirkD
+  int done;
 	int xres, yres;
 	int gxres, gyres;
 	int walk;
@@ -147,12 +167,14 @@ class Global {
 	char keys[65536];
 
         float xc[2];
-        float yc[2]; 
+        float yc[2];
 
   int magazine;
 
 	Global() {
-	    done=0;
+      ehead = NULL;
+      nenemies = 0;
+      done=0;
 	    xres=800;
 	    yres=600;
 	    gxres = 800;
@@ -183,6 +205,23 @@ class Global {
 		box[i][2] = 0.0;
 		//clock_gettime(CLOCK_REALTIME, &bulletTimer);
 	    }
+
+      //build 10 enemies...
+  		for (int j=0; j<10; j++) {
+  			Enemy *e = new Enemy;
+  			//e->pos[0] = (Flt)(rand() % xres);
+  			//e->pos[1] = (Flt)(rand() % yres);
+  			//e->pos[2] = 0.0f;
+  			//e->vel[0] = (Flt)(rnd()*2.0-1.0);
+  			//e->vel[1] = (Flt)(rnd()*2.0-1.0);
+
+  			//add to front of linked list
+  			e->next = ehead;
+  			if (ehead != NULL)
+  				ehead->prev = e;
+  			ehead = e;
+  			++nenemies;
+      }
 	    clock_gettime(CLOCK_REALTIME, &bulletTimer);
 	    memset(keys,0, 65536);
 	}

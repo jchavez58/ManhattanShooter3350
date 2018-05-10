@@ -2,7 +2,7 @@
 /*
 
 Author: Dirk Duclos
-Last Modified: 5/8/18
+Last Modified: 5/10/18
 
 Tasks Assigned:
   1. Colission detection
@@ -81,17 +81,49 @@ void detectCharWallColission(int posx, int posy, Global &g)
     }
 }
 
-//void detectBullEnemyColission(Bullet *b)
-//{
-    //cout << "bullet pos x: " << (int)b->pos[0] << endl;
-    //cout << "shape x: " << s.centerx << endl;
-    //if (b->pos[0] == s.centerx && b->pos[1] == s->centery)
-   // {
-     // cout << "bullet hit" << endl;
-   // }
-//}
+void deleteEnemy(Global *g, Enemy *node)
+{
+	//Remove a node from doubly-linked list.
+	//Must look at 4 special cases below.
+	if (node->prev == NULL) {
+		if (node->next == NULL) {
+			//only 1 item in list.
+			g->ehead = NULL;
+		} else {
+			//at beginning of list.
+			node->next->prev = NULL;
+			g->ehead = node->next;
+		}
+	} else {
+		if (node->next == NULL) {
+			//at end of list.
+			node->prev->next = NULL;
+		} else {
+			//in middle of list.
+			node->prev->next = node->next;
+			node->next->prev = node->prev;
+		}
+	}
+	delete node;
+	node = NULL;
+}
 
-void drawBox(int x,int y)
+/*void detectBullEnemyColission(Bullet *b, Enemy *e, Global *g)
+{
+    //cout << "bullet pos x: " << (int)b->pos[0]+5 << endl;
+    //cout << "shape x: " << s.centerx << endl;
+           if (b->pos[0] > e->pos[0]) {
+           Enemy *savee = e->next;
+           deleteEnemy(g,e);
+           e = savee;
+           g->nenemies--;
+           }
+           if (e == NULL)
+       			exit(0);
+       		e = e->next;
+}
+*/
+/*void drawBox(int x,int y)
 {
   s.centerx = x;
   s.centery = y;
@@ -106,3 +138,4 @@ void drawBox(int x,int y)
   glEnd();
   glPopMatrix();
 }
+*/

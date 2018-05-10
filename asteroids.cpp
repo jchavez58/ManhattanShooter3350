@@ -192,7 +192,7 @@ public:
 		if (vi == NULL) {
 			std::cout << "\n\tno appropriate visual found\n" << std::endl;
 			exit(EXIT_FAILURE);
-		} 
+		}
 		Colormap cmap = XCreateColormap(dpy, root, vi->visual, AllocNone);
 		swa.colormap = cmap;
 		swa.event_mask = ExposureMask | KeyPressMask | KeyReleaseMask |
@@ -401,7 +401,7 @@ void check_mouse(XEvent *e)
 			int xdiff = savex - e->xbutton.x;
 			int ydiff = savey - e->xbutton.y;
 			if (++ct < 10)
-				return;		
+				return;
 			if (xdiff > 0) {
 				//mouse moved along the x-axis.
 				g.ship.angle += 0.05f * (float)xdiff;
@@ -832,9 +832,3 @@ void render()
 		++b;
 	}
 }
-
-
-
-
-
-
