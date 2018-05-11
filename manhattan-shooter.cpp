@@ -37,7 +37,7 @@ using namespace std;
 //constants
 //const float timeslice = 1.0
 //const float gravity = -0.2f;
-bool flip = true;
+bool flip = false;
 bool cd = false;
 #define ALPHA 1
 extern void Drawbullets(Global&);
@@ -55,6 +55,8 @@ extern float RandomizeEnemyPosx();
 extern void renderHero(Global&, int, int);
 extern void renderGround(Global&);
 extern void renderBackground(Global&); 
+extern void initB(Global&);
+
 float res= RandomizeEnemyPosx();
 float res1= RandomizeEnemyPosx();
 float res2= RandomizeEnemyPosx();
@@ -93,8 +95,8 @@ int menuPosition = 1;
 //bool inMainMenu = false;
 
 Image img[] = {"images/walk_left.png", "images/Background.jpg",
-    "images/menu11.png", "images/pointer.png",
-    "images/tutorial.png", "images/credits.png", "images/enemy_left3.png", "images/Background1.jpg"};
+	"images/menu11.png", "images/pointer.png",
+	"images/tutorial.png", "images/credits.png", "images/enemy_left3.png", "images/Background1.jpg"};
 //-----------------------------------------------------------------------------
 //Setup timers
 Timers timers;
@@ -106,82 +108,82 @@ Global g;
 
 
 class X11_wrapper {
-    private:
-	Display *dpy;
-	Window win;
-    public:
-	X11_wrapper() {
-	    GLint att[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None };
-	    //GLint att[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, None };
-	    XSetWindowAttributes swa;
-	    setupScreenRes(g.xres, g.yres);
-	    dpy = XOpenDisplay(NULL);
-	    if (dpy == NULL) {
-		printf("\n\tcannot connect to X server\n\n");
-		exit(EXIT_FAILURE);
-	    }
-	    Window root = DefaultRootWindow(dpy);
-	    XVisualInfo *vi = glXChooseVisual(dpy, 0, att);
-	    if (vi == NULL) {
-		printf("\n\tno appropriate visual found\n\n");
-		exit(EXIT_FAILURE);
-	    }
+	private:
+		Display *dpy;
+		Window win;
+	public:
+		X11_wrapper() {
+			GLint att[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None };
+			//GLint att[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, None };
+			XSetWindowAttributes swa;
+			setupScreenRes(g.xres, g.yres);
+			dpy = XOpenDisplay(NULL);
+			if (dpy == NULL) {
+				printf("\n\tcannot connect to X server\n\n");
+				exit(EXIT_FAILURE);
+			}
+			Window root = DefaultRootWindow(dpy);
+			XVisualInfo *vi = glXChooseVisual(dpy, 0, att);
+			if (vi == NULL) {
+				printf("\n\tno appropriate visual found\n\n");
+				exit(EXIT_FAILURE);
+			}
 
-	    Colormap cmap = XCreateColormap(dpy, root, vi->visual, AllocNone);
-	    swa.colormap = cmap;
-	    swa.event_mask = ExposureMask | KeyPressMask | KeyReleaseMask |
-		StructureNotifyMask | SubstructureNotifyMask;
-	    win = XCreateWindow(dpy, root, 0, 0, g.xres, g.yres, 0,
-		    vi->depth, InputOutput, vi->visual,
-		    CWColormap | CWEventMask, &swa);
-	    GLXContext glc = glXCreateContext(dpy, vi, NULL, GL_TRUE);
-	    glXMakeCurrent(dpy, win, glc);
-	    setTitle();
-	}
-	~X11_wrapper() {
-	    XDestroyWindow(dpy, win);
-	    XCloseDisplay(dpy);
-	}
-	void setTitle() {
-	    //Set the window title bar.
-	    XMapWindow(dpy, win);
-	    XStoreName(dpy, win, "Manhattan Shooter - Civilian Mode");
-	}
-	void setupScreenRes(const int w, const int h) {
-	    g.xres = w;
-	    g.yres = h;
-	}
-	void reshapeWindow(int width, int height) {
-	    //window has been resized.
-	    setupScreenRes(width, height);
-	    glViewport(0, 0, (GLint)width, (GLint)height);
-	    glMatrixMode(GL_PROJECTION); glLoadIdentity();
-	    glMatrixMode(GL_MODELVIEW); glLoadIdentity();
-	    glOrtho(0, g.xres, 0, g.yres, -1, 1);
-	    setTitle();
-	}
-	void checkResize(XEvent *e) {
-	    //The ConfigureNotify is sent by the
-	    //server if the window is resized.
-	    if (e->type != ConfigureNotify)
-		return;
-	    XConfigureEvent xce = e->xconfigure;
-	    if (xce.width != g.xres || xce.height != g.yres) {
-		//Window size did change.
-		reshapeWindow(xce.width, xce.height);
-	    }
-	}
-	bool getXPending() {
-	    return XPending(dpy);
-	}
-	XEvent getXNextEvent() {
-	    XEvent e;
-	    XNextEvent(dpy, &e);
-	    return e;
-	}
-	void swapBuffers() {
-	    glXSwapBuffers(dpy, win);
-	}
+			Colormap cmap = XCreateColormap(dpy, root, vi->visual, AllocNone);
+			swa.colormap = cmap;
+			swa.event_mask = ExposureMask | KeyPressMask | KeyReleaseMask |
+				StructureNotifyMask | SubstructureNotifyMask;
+			win = XCreateWindow(dpy, root, 0, 0, g.xres, g.yres, 0,
+					vi->depth, InputOutput, vi->visual,
+					CWColormap | CWEventMask, &swa);
+			GLXContext glc = glXCreateContext(dpy, vi, NULL, GL_TRUE);
+			glXMakeCurrent(dpy, win, glc);
+			setTitle();
+		}
+		~X11_wrapper() {
+			XDestroyWindow(dpy, win);
+			XCloseDisplay(dpy);
+		}
+		void setTitle() {
+			//Set the window title bar.
+			XMapWindow(dpy, win);
+			XStoreName(dpy, win, "Manhattan Shooter - Civilian Mode");
+		}
+		void setupScreenRes(const int w, const int h) {
+			g.xres = w;
+			g.yres = h;
+		}
+		void reshapeWindow(int width, int height) {
+			//window has been resized.
+			setupScreenRes(width, height);
+			glViewport(0, 0, (GLint)width, (GLint)height);
+			glMatrixMode(GL_PROJECTION); glLoadIdentity();
+			glMatrixMode(GL_MODELVIEW); glLoadIdentity();
+			glOrtho(0, g.xres, 0, g.yres, -1, 1);
+			setTitle();
+		}
+		void checkResize(XEvent *e) {
+			//The ConfigureNotify is sent by the
+			//server if the window is resized.
+			if (e->type != ConfigureNotify)
+				return;
+			XConfigureEvent xce = e->xconfigure;
+			if (xce.width != g.xres || xce.height != g.yres) {
+				//Window size did change.
+				reshapeWindow(xce.width, xce.height);
+			}
+		}
+		bool getXPending() {
+			return XPending(dpy);
+		}
+		XEvent getXNextEvent() {
+			XEvent e;
+			XNextEvent(dpy, &e);
+			return e;
+		}
+		void swapBuffers() {
+			glXSwapBuffers(dpy, win);
+		}
 
 } x11;
 
@@ -196,492 +198,495 @@ void render(void);
 
 int main(void)
 {
-    initOpengl();
-    init();
-    int done = 0;
-    while (!done) {
-	while (x11.getXPending()) {
-	    XEvent e = x11.getXNextEvent();
-	    x11.checkResize(&e);
-	    checkMouse(&e);
-	    done = checkKeys(&e);
-	}
-	physics();
-	render();
-	x11.swapBuffers();
+	initOpengl();
+	init();
+	int done = 0;
+	while (!done) {
+		while (x11.getXPending()) {
+			XEvent e = x11.getXNextEvent();
+			x11.checkResize(&e);
+			checkMouse(&e);
+			done = checkKeys(&e);
+		}
+		physics();
+		render();
+		x11.swapBuffers();
 
-    }
-    cleanup_fonts();
-    uninitSounds();
-    return 0;
+	}
+	cleanup_fonts();
+	uninitSounds();
+	return 0;
 }
 
 unsigned char *buildAlphaData(Image *img)
 {
-    //add 4th component to RGB stream...
-    int i;
-    unsigned char *newdata, *ptr;
-    unsigned char *data = (unsigned char *)img->data;
-    newdata = (unsigned char *)malloc(img->width * img->height * 4);
-    ptr = newdata;
-    unsigned char a,b,c;
-    //use the first pixel in the image as the transparent color.
-    unsigned char t0 = *(data+0);
-    unsigned char t1 = *(data+1);
-    unsigned char t2 = *(data+2);
-    for (i=0; i<img->width * img->height * 3; i+=3) {
-	a = *(data+0);
-	b = *(data+1);
-	c = *(data+2);
-	*(ptr+0) = a;
-	*(ptr+1) = b;
-	*(ptr+2) = c;
-	*(ptr+3) = 1;
-	if (a==t0 && b==t1 && c==t2)
-	    *(ptr+3) = 0;
-	//-----------------------------------------------
-	ptr += 4;
-	data += 3;
-    }
-    return newdata;
+	//add 4th component to RGB stream...
+	int i;
+	unsigned char *newdata, *ptr;
+	unsigned char *data = (unsigned char *)img->data;
+	newdata = (unsigned char *)malloc(img->width * img->height * 4);
+	ptr = newdata;
+	unsigned char a,b,c;
+	//use the first pixel in the image as the transparent color.
+	unsigned char t0 = *(data+0);
+	unsigned char t1 = *(data+1);
+	unsigned char t2 = *(data+2);
+	for (i=0; i<img->width * img->height * 3; i+=3) {
+		a = *(data+0);
+		b = *(data+1);
+		c = *(data+2);
+		*(ptr+0) = a;
+		*(ptr+1) = b;
+		*(ptr+2) = c;
+		*(ptr+3) = 1;
+		if (a==t0 && b==t1 && c==t2)
+			*(ptr+3) = 0;
+		//-----------------------------------------------
+		ptr += 4;
+		data += 3;
+	}
+	return newdata;
 }
 
 void initOpengl(void)
 {
-    //OpenGL initialization
-    glViewport(0, 0, g.xres, g.yres);
-    //Initialize matrices
-    glMatrixMode(GL_PROJECTION); glLoadIdentity();
-    glMatrixMode(GL_MODELVIEW); glLoadIdentity();
-    //This sets 2D mode (no perspective)
-    glOrtho(0, g.xres, 0, g.yres, -1, 1);
-    //
-    glDisable(GL_LIGHTING);
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_FOG);
-    glDisable(GL_CULL_FACE);
-    //
-    //Clear the screen
-    glClearColor(1.0, 1.0, 1.0, 1.0);
-    //glClear(GL_COLOR_BUFFER_BIT);
-    //Do this to allow fonts
-    glEnable(GL_TEXTURE_2D);
-    initialize_fonts();
-    //
-    //load the images file into a ppm structure.
-    //
-    int w = img[0].width;
-    int h = img[0].height;
+	//OpenGL initialization
+	glViewport(0, 0, g.xres, g.yres);
+	//Initialize matrices
+	glMatrixMode(GL_PROJECTION); glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW); glLoadIdentity();
+	//This sets 2D mode (no perspective)
+	glOrtho(0, g.xres, 0, g.yres, -1, 1);
+	//
+	glDisable(GL_LIGHTING);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_FOG);
+	glDisable(GL_CULL_FACE);
+	//
+	//Clear the screen
+	glClearColor(1.0, 1.0, 1.0, 1.0);
+	//glClear(GL_COLOR_BUFFER_BIT);
+	//Do this to allow fonts
+	glEnable(GL_TEXTURE_2D);
+	initialize_fonts();
+	//
+	//load the images file into a ppm structure.
+	//
+	int w = img[0].width;
+	int h = img[0].height;
 
 
 
-    //
-    //create opengl texture elements
-    glGenTextures(1, &g.backTexture);
-    glGenTextures(1, &g.walkTexture);
-    glGenTextures(1, &g.alienTexture);
-    //glGenTextures(1, &e.alienTexture); //dirkD
-    glGenTextures(1, &g.mainMenuTexture);
-    glGenTextures(1, &g.pointerTexture);
-    glGenTextures(1, &g.tutorialTexture);
-    glGenTextures(1, &g.creditsTexture);
-    //-------------------------------------------------------------------------
-    //silhouette
-    //this is similar to a sprite graphic
-    //
-    /*
-       glBindTexture(GL_TEXTURE_2D, g.backTexture);
-       unsigned char *backData = buildAlphaData(&img[7]);
-       glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-       glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
-       GL_RGBA, GL_UNSIGNED_BYTE, backData);
+	//
+	//create opengl texture elements
+	glGenTextures(1, &g.backTexture);
+	glGenTextures(1, &g.walkTexture);
+	glGenTextures(1, &g.alienTexture);
+	//glGenTextures(1, &e.alienTexture); //dirkD
+	glGenTextures(1, &g.mainMenuTexture);
+	glGenTextures(1, &g.pointerTexture);
+	glGenTextures(1, &g.tutorialTexture);
+	glGenTextures(1, &g.creditsTexture);
+	//-------------------------------------------------------------------------
+	//silhouette
+	//this is similar to a sprite graphic
+	//
+	/*
+	   glBindTexture(GL_TEXTURE_2D, g.backTexture);
+	   unsigned char *backData = buildAlphaData(&img[7]);
+	   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+	   GL_RGBA, GL_UNSIGNED_BYTE, backData);
 
-       g.xc[0] = 0.0;
-       g.xc[1] = 0.25;
-       g.yc[0] = 0.0;
-       g.yc[1] = 1.0;
+	   g.xc[0] = 0.0;
+	   g.xc[1] = 0.25;
+	   g.yc[0] = 0.0;
+	   g.yc[1] = 1.0;
 
-*/
-
-
-    glBindTexture(GL_TEXTURE_2D, g.walkTexture);
-    //
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-    //
-    //must build a new set of data...
-    unsigned char *walkData = buildAlphaData(&img[0]);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
-	    GL_RGBA, GL_UNSIGNED_BYTE, walkData);
+	 */
 
 
-
-
-    glBindTexture(GL_TEXTURE_2D, g.alienTexture);
-    //
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-    //
-    //must build a new set of data...
-    unsigned char *alienData = buildAlphaData(&img[6]);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
-	    GL_RGBA, GL_UNSIGNED_BYTE, alienData);
-
-    /*
-       glBindTexture(GL_TEXTURE_2D, e.alienTexture);
-    //
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-    //
-    //must build a new set of data...
-    unsigned char *alienData2 = buildAlphaData(&img[6]);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
-    GL_RGBA, GL_UNSIGNED_BYTE, alienData2);
-    */
+	glBindTexture(GL_TEXTURE_2D, g.walkTexture);
+	//
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	//
+	//must build a new set of data...
+	unsigned char *walkData = buildAlphaData(&img[0]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+			GL_RGBA, GL_UNSIGNED_BYTE, walkData);
 
 
 
-    w = 1024;
-    h = 768;
-    glBindTexture(GL_TEXTURE_2D, g.mainMenuTexture);
-    //
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-    //
-    //must build a new set of data...
-    unsigned char *mainMenuData = buildAlphaData(&img[2]);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
-	    GL_RGBA, GL_UNSIGNED_BYTE, mainMenuData);
 
-    glBindTexture(GL_TEXTURE_2D, g.tutorialTexture);
-    //
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-    //
-    //must build a new set of data...
-    unsigned char *tutorialData = buildAlphaData(&img[4]);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
-	    GL_RGBA, GL_UNSIGNED_BYTE, tutorialData);
+	glBindTexture(GL_TEXTURE_2D, g.alienTexture);
+	//
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	//
+	//must build a new set of data...
+	unsigned char *alienData = buildAlphaData(&img[6]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+			GL_RGBA, GL_UNSIGNED_BYTE, alienData);
 
-    glBindTexture(GL_TEXTURE_2D, g.creditsTexture);
-    //
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-    //
-    //must build a new set of data...
-    unsigned char *creditsData = buildAlphaData(&img[5]);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
-	    GL_RGBA, GL_UNSIGNED_BYTE, creditsData);
+	/*
+	   glBindTexture(GL_TEXTURE_2D, e.alienTexture);
+	//
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	//
+	//must build a new set of data...
+	unsigned char *alienData2 = buildAlphaData(&img[6]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+	GL_RGBA, GL_UNSIGNED_BYTE, alienData2);
+	 */
 
-    w = 40;
-    h = 24;
-    glBindTexture(GL_TEXTURE_2D, g.pointerTexture);
-    //
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-    //
-    //must build a new set of data...
-    unsigned char *pointerData = buildAlphaData(&img[3]);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
-	    GL_RGBA, GL_UNSIGNED_BYTE, pointerData);
 
-    w = img[7].width;
-    h = img[7].height;
 
-    glBindTexture(GL_TEXTURE_2D, g.backTexture);
-    unsigned char *backData = buildAlphaData(&img[7]);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
-	    GL_RGBA, GL_UNSIGNED_BYTE, backData);
+	w = 1024;
+	h = 768;
+	glBindTexture(GL_TEXTURE_2D, g.mainMenuTexture);
+	//
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	//
+	//must build a new set of data...
+	unsigned char *mainMenuData = buildAlphaData(&img[2]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+			GL_RGBA, GL_UNSIGNED_BYTE, mainMenuData);
 
-    g.xc[0] = 0.0;
-    g.xc[1] = 0.25;
-    g.yc[0] = 0.0;
-    g.yc[1] = 1.0;
+	glBindTexture(GL_TEXTURE_2D, g.tutorialTexture);
+	//
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	//
+	//must build a new set of data...
+	unsigned char *tutorialData = buildAlphaData(&img[4]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+			GL_RGBA, GL_UNSIGNED_BYTE, tutorialData);
 
-    //free(walkData);
-    //unlink("./images/walk.ppm");
-    //-------------------------------------------------------------------------
+	glBindTexture(GL_TEXTURE_2D, g.creditsTexture);
+	//
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	//
+	//must build a new set of data...
+	unsigned char *creditsData = buildAlphaData(&img[5]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+			GL_RGBA, GL_UNSIGNED_BYTE, creditsData);
+
+	w = 40;
+	h = 24;
+	glBindTexture(GL_TEXTURE_2D, g.pointerTexture);
+	//
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	//
+	//must build a new set of data...
+	unsigned char *pointerData = buildAlphaData(&img[3]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+			GL_RGBA, GL_UNSIGNED_BYTE, pointerData);
+
+	w = img[7].width;
+	h = img[7].height;
+
+	glBindTexture(GL_TEXTURE_2D, g.backTexture);
+	unsigned char *backData = buildAlphaData(&img[7]);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+			GL_RGBA, GL_UNSIGNED_BYTE, backData);
+
+	//extern void intitB(Global&);
+	initB(g);
+	/*
+	   g.xc[0] = 0.0;
+	   g.xc[1] = 0.25;
+	   g.yc[0] = 0.0;
+	   g.yc[1] = 1.0; */
+
+	//free(walkData);
+	//unlink("./images/walk.ppm");
+	//-------------------------------------------------------------------------
 }
 
 void init() {
-    initSounds();
+	initSounds();
 }
 
 void checkMouse(XEvent *e)
 {
-    //Did the mouse move?
-    //Was a mouse button clicked?
-    static int savex = 0;
-    static int savey = 0;
-    //
-    if (e->type == ButtonRelease) {
-	return;
-    }
-    if (e->type == ButtonPress) {
-	if (e->xbutton.button==1) {
-	    //Left button is down
+	//Did the mouse move?
+	//Was a mouse button clicked?
+	static int savex = 0;
+	static int savey = 0;
+	//
+	if (e->type == ButtonRelease) {
+		return;
 	}
-	if (e->xbutton.button==3) {
-	    //Right button is down
+	if (e->type == ButtonPress) {
+		if (e->xbutton.button==1) {
+			//Left button is down
+		}
+		if (e->xbutton.button==3) {
+			//Right button is down
+		}
 	}
-    }
-    if (savex != e->xbutton.x || savey != e->xbutton.y) {
-	//Mouse moved
-	savex = e->xbutton.x;
-	savey = e->xbutton.y;
-    }
+	if (savex != e->xbutton.x || savey != e->xbutton.y) {
+		//Mouse moved
+		savex = e->xbutton.x;
+		savey = e->xbutton.y;
+	}
 }
 
 int checkKeys(XEvent *e)
 {
-    //keyboard input
-    //float moveup = g.yres/2.0;
-    Bullet * b = NULL;
-    static int shift=0;
-    if (e->type != KeyRelease && e->type != KeyPress)
-	return 0;
-    int key = (XLookupKeysym(&e->xkey, 0) & 0x0000ffff);
-    if (e->type == KeyRelease) {
-	if (key == XK_Shift_L || key == XK_Shift_R)
-	    shift = 0;
-	return 0;
-    }
-    if (key == XK_Shift_L || key == XK_Shift_R) {
-	shift=1;
-	return 0;
-    }
-    (void)shift;
-    if(inMainMenu) {
-	if (key == XK_Escape)
-	    exit (1);
-	if (key == XK_Return) {
-	    if (menuPosition == 1) {
-		inMainMenu = false;
-		inGame = true;
-		// Start game timer
-		timers.recordTime(&timers.gameTime);
-	    } else if (menuPosition == 2) {
-		inMainMenu = false;
-		inTutorial = true;
-	    } else if(menuPosition == 3) {
-		inMainMenu = false;
-		inCredits = true;
-	    } else if(menuPosition == 4) {
-		exit (1);
-	    }
-	} else if (key == XK_Down || key == XK_s) {
-	    menuPosition++;
-	} else if (key == XK_Up || key == XK_w) {
-	    menuPosition--;
+	//keyboard input
+	//float moveup = g.yres/2.0;
+	Bullet * b = NULL;
+	static int shift=0;
+	if (e->type != KeyRelease && e->type != KeyPress)
+		return 0;
+	int key = (XLookupKeysym(&e->xkey, 0) & 0x0000ffff);
+	if (e->type == KeyRelease) {
+		if (key == XK_Shift_L || key == XK_Shift_R)
+			shift = 0;
+		return 0;
 	}
-	if(menuPosition > 4)
-	    menuPosition = 1;
-	if(menuPosition < 1)
-	    menuPosition = 4;
-    }
-    if (inTutorial) {
-	if (key == XK_Escape) {
-	    inTutorial = false;
-	    inMainMenu = true;
+	if (key == XK_Shift_L || key == XK_Shift_R) {
+		shift=1;
+		return 0;
 	}
-    }
-    if (inCredits) {
-	if (key == XK_Escape) {
-	    inCredits = false;
-	    inMainMenu = true;
-	}
-    }
-    if(inGame) {
-
-	switch (key) {
-	    case XK_a:
-		//for(int i =0; i < 300 ; i++)
-		makeSoundTest();
-		if(g.magazine >= 1) {
-		    ShootBullets(g,b,timers);
-		    --g.magazine;
+	(void)shift;
+	if(inMainMenu) {
+		if (key == XK_Escape)
+			exit (1);
+		if (key == XK_Return) {
+			if (menuPosition == 1) {
+				inMainMenu = false;
+				inGame = true;
+				// Start game timer
+				timers.recordTime(&timers.gameTime);
+			} else if (menuPosition == 2) {
+				inMainMenu = false;
+				inTutorial = true;
+			} else if(menuPosition == 3) {
+				inMainMenu = false;
+				inCredits = true;
+			} else if(menuPosition == 4) {
+				exit (1);
+			}
+		} else if (key == XK_Down || key == XK_s) {
+			menuPosition++;
+		} else if (key == XK_Up || key == XK_w) {
+			menuPosition--;
 		}
-		break;
-	    case XK_r:
-		g.magazine = magazine_capacity;
-		makeReloadSound();
-		break;
-	    case XK_w:
-		timers.recordTime(&timers.walkTime);
-		g.walk ^= 1;
-		break;
-	    case XK_Left:
-		moveBack(g);
-		detectCharWallColission(g.xres, g.yres,g);
-		flip = true;
-		//g.xres -= 5;
-		//extern void moveForward(Global&);
-		//moveForward(g);
-		break;
-	    case XK_Right:
-		moveForward(g);
-		detectCharWallColission(g.xres, g.yres,g);
-		flip = false;
-		break;
-	    case XK_Up:
-		//g.yres += 10;
-		//moveup;
-		//g.walkFrame += 5;
-		//extern void movecharUp(Global&);
-		movecharUp(g);
-		detectCharWallColission(g.xres, g.yres,g);
-		break;
-	    case XK_Down:
-		//extern void movecharDown(Global&);
-		movecharDown(g);
-		detectCharWallColission(g.xres, g.yres,g);
-		//g.yres -= 10;
-		break;
-	    case XK_equal:
-		g.delay -= 0.005;
-		if (g.delay < 0.005)
-		    g.delay = 0.005;
-		//g.xc[0] = 7000.0;
-		//g.xc[1] = 7000.0;
-
-		break;
-	    case XK_minus:
-		g.delay += 0.005;
-		break;
-	    case XK_Escape:
-		inMainMenu = true;
-		inGame = false;
-		break;
+		if(menuPosition > 4)
+			menuPosition = 1;
+		if(menuPosition < 1)
+			menuPosition = 4;
 	}
-    }
-    return 0;
+	if (inTutorial) {
+		if (key == XK_Escape) {
+			inTutorial = false;
+			inMainMenu = true;
+		}
+	}
+	if (inCredits) {
+		if (key == XK_Escape) {
+			inCredits = false;
+			inMainMenu = true;
+		}
+	}
+	if(inGame) {
+
+		switch (key) {
+			case XK_a:
+				//for(int i =0; i < 300 ; i++)
+				makeSoundTest();
+				if(g.magazine >= 1) {
+					ShootBullets(g,b,timers);
+					--g.magazine;
+				}
+				break;
+			case XK_r:
+				g.magazine = magazine_capacity;
+				makeReloadSound();
+				break;
+			case XK_w:
+				timers.recordTime(&timers.walkTime);
+				g.walk ^= 1;
+				break;
+			case XK_Left:
+				moveBack(g);
+				detectCharWallColission(g.xres, g.yres,g);
+				flip = true;
+				//g.xres -= 5;
+				//extern void moveForward(Global&);
+				//moveForward(g);
+				break;
+			case XK_Right:
+				moveForward(g);
+				detectCharWallColission(g.xres, g.yres,g);
+				flip = false;
+				break;
+			case XK_Up:
+				//g.yres += 10;
+				//moveup;
+				//g.walkFrame += 5;
+				//extern void movecharUp(Global&);
+				movecharUp(g);
+				detectCharWallColission(g.xres, g.yres,g);
+				break;
+			case XK_Down:
+				//extern void movecharDown(Global&);
+				movecharDown(g);
+				detectCharWallColission(g.xres, g.yres,g);
+				//g.yres -= 10;
+				break;
+			case XK_equal:
+				g.delay -= 0.005;
+				if (g.delay < 0.005)
+					g.delay = 0.005;
+				//g.xc[0] = 7000.0;
+				//g.xc[1] = 7000.0;
+
+				break;
+			case XK_minus:
+				g.delay += 0.005;
+				break;
+			case XK_Escape:
+				inMainMenu = true;
+				inGame = false;
+				break;
+		}
+	}
+	return 0;
 }
 
 Flt VecNormalize(Vec vec)
 {
-    Flt len, tlen;
-    Flt xlen = vec[0];
-    Flt ylen = vec[1];
-    Flt zlen = vec[2];
-    len = xlen*xlen + ylen*ylen + zlen*zlen;
-    if (len == 0.0) {
-	MakeVector(0.0,0.0,1.0,vec);
-	return 1.0;
-    }
-    len = sqrt(len);
-    tlen = 1.0 / len;
-    vec[0] = xlen * tlen;
-    vec[1] = ylen * tlen;
-    vec[2] = zlen * tlen;
-    return(len);
+	Flt len, tlen;
+	Flt xlen = vec[0];
+	Flt ylen = vec[1];
+	Flt zlen = vec[2];
+	len = xlen*xlen + ylen*ylen + zlen*zlen;
+	if (len == 0.0) {
+		MakeVector(0.0,0.0,1.0,vec);
+		return 1.0;
+	}
+	len = sqrt(len);
+	tlen = 1.0 / len;
+	vec[0] = xlen * tlen;
+	vec[1] = ylen * tlen;
+	vec[2] = zlen * tlen;
+	return(len);
 }
 extern void UpdateBulletpos(Bullet*, Global&, Timers&);
 //Timers t;
 void physics(void)
 {
-    Bullet *b = NULL;
-    if (inGame) {
-	//man is walking...
-	//when time is up, advance the frame.
-	timers.recordTime(&timers.timeCurrent);
-	double timeSpan = timers.timeDiff(&timers.walkTime, &timers.timeCurrent);
-	if (timeSpan > g.delay) {
-	    //advance
-	    ++g.walkFrame;
-	    //++g.eneFrame;
-	    //Dirk Duclos
-	    //With each frame, update x position of walk frame
-	    //Need to change walk frame to be just image
-	    //g.xres += 5;
+	Bullet *b = NULL;
+	if (inGame) {
+		//man is walking...
+		//when time is up, advance the frame.
+		timers.recordTime(&timers.timeCurrent);
+		double timeSpan = timers.timeDiff(&timers.walkTime, &timers.timeCurrent);
+		if (timeSpan > g.delay) {
+			//advance
+			++g.walkFrame;
+			//++g.eneFrame;
+			//Dirk Duclos
+			//With each frame, update x position of walk frame
+			//Need to change walk frame to be just image
+			//g.xres += 5;
 
-	    if (g.walkFrame >= 16)
-		g.walkFrame -= 16;
-	    timers.recordTime(&timers.walkTime);
+			if (g.walkFrame >= 16)
+				g.walkFrame -= 16;
+			timers.recordTime(&timers.walkTime);
 
-	    //UpdateBulletpos(b,g);
+			//UpdateBulletpos(b,g);
+
+		}
+		UpdateBulletpos(b,g,timers);
+		moveEnemy(g);
+		EnemyLoop(g);
+		physicsSpawnEnemy();
+		physicsEnemyMoving();
+
+		extern void moveBackground(Global &);
+		moveBackground(g);
+
+		for (int i=0; i<20; i++) {
+			g.box[i][0] -= 2.0 * (0.05 / g.delay);
+			if (g.box[i][0] < -10.0)
+				g.box[i][0] += g.gxres +10.0;
+
+		}
 
 	}
-	UpdateBulletpos(b,g,timers);
-	moveEnemy(g);
-	EnemyLoop(g);
-	physicsSpawnEnemy();
-	physicsEnemyMoving();
-
-	g.xc[0] += 0.001;
-	g.xc[1] += 0.001;
-
-	for (int i=0; i<20; i++) {
-	    g.box[i][0] -= 2.0 * (0.05 / g.delay);
-	    if (g.box[i][0] < -10.0)
-		g.box[i][0] += g.gxres +10.0;
-
-	}
-
-    }
 }
 
 
 void render(void)
 {
-    Rect r;
-    //Clear the screen
-    glClearColor(0.0, 0.0, 1.0, 1.0);
-    glClear(GL_COLOR_BUFFER_BIT);
-    float cx = g.xres/14.0;
-    float cy = g.yres/2.0;
-    if (inMainMenu) {
-	renderMainMenu(g.menuxres, g.menuyres, g.mainMenuTexture);
-	renderPointer(g.menuxres, g.pointerTexture);
-    } else if (inTutorial) {
-	renderTutorial(g.menuxres, g.menuyres, g.tutorialTexture);
-    } else if (inCredits) {
-	renderCredits(g.menuxres, g.menuyres, g.creditsTexture);
-    } else if (inGame) {
+	Rect r;
+	//Clear the screen
+	glClearColor(0.0, 0.0, 1.0, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT);
+	float cx = g.xres/14.0;
+	float cy = g.yres/2.0;
+	if (inMainMenu) {
+		renderMainMenu(g.menuxres, g.menuyres, g.mainMenuTexture);
+		renderPointer(g.menuxres, g.pointerTexture);
+	} else if (inTutorial) {
+		renderTutorial(g.menuxres, g.menuyres, g.tutorialTexture);
+	} else if (inCredits) {
+		renderCredits(g.menuxres, g.menuyres, g.creditsTexture);
+	} else if (inGame) {
 
-	//street
-	renderGround(g);
+		//street
+		renderGround(g);
 
-	//background
-	renderBackground(g);
+		//background
+		renderBackground(g);
 
-	//walk frame.
-	renderHero(g, cx, cy);
+		//walk frame.
+		renderHero(g, cx, cy);
 
 
 
-	extern void drawEnemy(Enemy& enemy, Global& g);
-	for(unsigned int i = 0; i < g.enemies.size(); i++) {
-	    drawEnemy(*g.enemies[i], g);
+		extern void drawEnemy(Enemy& enemy, Global& g);
+		for(unsigned int i = 0; i < g.enemies.size(); i++) {
+			drawEnemy(*g.enemies[i], g);
+		}
+
+		Drawbullets(g);
+
+
+		renderGameTime();
+		renderMagazineCount();
+		// Menu
+
+		int topright = 600;
+		unsigned int c = 0x00ffff44;
+		r.bot = topright - 20;
+		r.left = 10;
+		r.center = 0;
+		//ggprint8b(&r, 16, c, "W   Walk cycle");
+		ggprint8b(&r, 16, c, "+   faster");
+		ggprint8b(&r, 16, c, "-   slower");
+		ggprint8b(&r, 16, c, "right arrow: walk right");
+		ggprint8b(&r, 16, c, "left arrow: walk left");
+		ggprint8b(&r, 16, c, "up arrow: walk right");
+		ggprint8b(&r, 16, c, "down arrow: walk left");
+		ggprint8b(&r, 16, c, "shoot: a");
+		ggprint8b(&r, 16, c, "reload: r");
+		//ggprint8b(&r, 16, c, "Targets Eliminated: ");
+
+		//Names of Group members lab5
+		//extern void displayTimeFunc(int x, int y, double (&x)(double));
+		extern void displayGameName(int x, int y, const char* name);
 	}
-
-	Drawbullets(g);
-
-
-	renderGameTime();
-	renderMagazineCount();
-	// Menu
-
-	int topright = 600;
-	unsigned int c = 0x00ffff44;
-	r.bot = topright - 20;
-	r.left = 10;
-	r.center = 0;
-	//ggprint8b(&r, 16, c, "W   Walk cycle");
-	ggprint8b(&r, 16, c, "+   faster");
-	ggprint8b(&r, 16, c, "-   slower");
-	ggprint8b(&r, 16, c, "right arrow: walk right");
-	ggprint8b(&r, 16, c, "left arrow: walk left");
-	ggprint8b(&r, 16, c, "up arrow: walk right");
-	ggprint8b(&r, 16, c, "down arrow: walk left");
-	ggprint8b(&r, 16, c, "shoot: a");
-	ggprint8b(&r, 16, c, "reload: r");
-	//ggprint8b(&r, 16, c, "Targets Eliminated: ");
-
-	//Names of Group members lab5
-	//extern void displayTimeFunc(int x, int y, double (&x)(double));
-	extern void displayGameName(int x, int y, const char* name);
-    }
 }
