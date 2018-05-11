@@ -66,15 +66,15 @@ void spawnEnemy(Global&g, const float posx, const float posy)
     //g.centerx = cx;
     //g.centery = cy;
 
-    extern void drawLine(int,int,int,int, Global&);
-    drawLine(posx,posy,cx,cy,g);
+    extern void drawBox(int,int,int,int, Global&);
+    drawBox(posx,posy,cx,cy,g);
 
     for (int i = 0; i < g.nbullets; i++) {
-        if (g.barr[i].pos[0] > (float)g.enxres) {
+        if (g.barr[i].pos[0] > (float)g.centerx-10 && g.barr[i].pos[0] < (float)g.centerx+10 &&
+            g.barr[i].pos[1] > (float)g.centery-30 && g.barr[i].pos[1] < (float)g.centery+30) {
           //cout << "bullet hit enemy" << endl;
-          glPushMatrix();
-          glBindTexture(GL_TEXTURE_2D, 0);
-          glPopMatrix();
+          glDisable(GL_TEXTURE_2D);
+          break;
         }
     }
 

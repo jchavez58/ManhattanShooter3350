@@ -97,7 +97,7 @@ void detectCharWallColission(int posx, int posy, Global &g)
 	node = NULL;
 }
 
-/*void detectBullEnemyColission(Bullet *b, Enemy *e, Global *g)
+void detectBullEnemyColission(Bullet *b, Enemy *e, Global *g)
 {
     //cout << "bullet pos x: " << (int)b->pos[0]+5 << endl;
     //cout << "shape x: " << s.centerx << endl;
@@ -113,7 +113,7 @@ void detectCharWallColission(int posx, int posy, Global &g)
 }
 */
 
-void drawLine(int x,int y, int posx, int posy, Global&g)
+void drawBox(int x,int y, int posx, int posy, Global&g)
 {
   glPushMatrix();
   glTranslatef(posx, posy, 0);
@@ -121,10 +121,13 @@ void drawLine(int x,int y, int posx, int posy, Global&g)
   g.centery = posy;
   g.enxres = x;
   g.enyres = y;
+  
   glColor3f(1.0f, 0.0f, 0.0f); // Let it be blue
-  glBegin(GL_LINE_STRIP); // 2x2 pixels
+  glBegin(GL_QUADS); // 2x2 pixels
   glVertex2i(x-10, y+30);
-  glVertex2i(x-10, -y-30);
+  glVertex2i(x+10, y+30);
+  glVertex2i(x+10, y-30);
+  glVertex2i(x-10, y-30);
   glEnd();
   glPopMatrix();
 }
