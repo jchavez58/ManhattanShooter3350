@@ -63,6 +63,7 @@ void renderGameTime() {
 		int seconds = time / 60 * 60.0;
 		int ms = (time / 60 * 60 - seconds) * 100;
 		unsigned int c = 0x00ffffff;
+		unsigned int c_red = 0x00ff0000;
 
 		Rect r;
 		r.bot = 20;
@@ -77,8 +78,10 @@ void renderGameTime() {
 			inGame = false;
 			inMainMenu = true;
 		}
-		if(time < 20 && ms < 25) return;
-
+		if (time < 20 && ms < 25) {
+			ggprint16(&r, 16, c_red, buffer);
+			return;
+		}
 		ggprint16(&r, 16, c, buffer);
 }
 

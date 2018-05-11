@@ -495,11 +495,11 @@ int checkKeys(XEvent *e)
 	switch (key) {
 	    case XK_a:
 		//for(int i =0; i < 300 ; i++)
+    makeSoundTest();
     if(g.magazine >= 1) {
       ShootBullets(g,b,timers);
       --g.magazine;
       }
-		makeSoundTest();
 		break;
       case XK_r:
         g.magazine = 7;
