@@ -606,10 +606,10 @@ void physics(void)
 	EnemyLoop(g);
         physicsSpawnEnemy();
         physicsEnemyMoving();
-        
+
 	g.xc[0] += 0.001;
 	g.xc[1] += 0.001;
-      
+
 	for (int i=0; i<20; i++) {
 	    g.box[i][0] -= 2.0 * (0.05 / g.delay);
 	    if (g.box[i][0] < -10.0)
@@ -735,14 +735,14 @@ void render(void)
         glEnd();
         */
 
-        
+
         extern void drawEnemy(Enemy& enemy, Global& g);
         for(unsigned int i = 0; i < g.enemies.size(); i++) {
             drawEnemy(*g.enemies[i], g);
         }
-        
+
 	Drawbullets(g);
-        
+
 
   renderGameTime();
   renderMagazineCount();

@@ -47,7 +47,7 @@ void drawEnemy(Enemy& enemy, Global& g)
 {
     tl.recordTime(&tl.timeCurrent);
     //double totalTime = tl.timeDiff(&enemy.time, &tl.timeCurrent);
-    
+
     int cx = enemy.pos[0];
     int cy = enemy.pos[1];
 
@@ -214,8 +214,8 @@ void UpdateBulletpos(Bullet *b, Global &g, Timers &t)
 
 	//Check for collision with window edges
 
-        extern void calculateCollisionOfBullet(Bullet *b, Global& g, Timers&t);
-        calculateCollisionOfBullet(b, g, t);
+        extern void calculateCollisionOfBullet(Bullet *b, Global& g);
+        calculateCollisionOfBullet(b, g);
 	i++;
     }
 

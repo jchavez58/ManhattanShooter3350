@@ -118,7 +118,7 @@ class Bullet {
 };
 
 class Enemy : public Bullet {
-    
+
 };
 
 
