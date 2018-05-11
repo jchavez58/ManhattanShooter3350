@@ -37,10 +37,10 @@ using namespace std;
 //constants
 //const float timeslice = 1.0
 //const float gravity = -0.2f;
-bool flip = false;
+bool flip = true;
 bool cd = false;
 #define ALPHA 1
-extern void Drawbullets(Bullet*, Global&);
+extern void Drawbullets(Global&);
 extern void ShootBullets(Global&, Bullet*, Timers&);
 extern void movecharUp(Global&);
 extern void movecharDown(Global&);
@@ -49,7 +49,6 @@ extern void moveBack(Global&);
 extern void detectCharWallColission(int,int,Global&); //dirkD
 extern void detectBullEnemyColission(Bullet*); //dirkD
 extern void EnemyLoop(Global&);
-extern void spawnEnemy(Global&,const float, const float);
 extern float RandomizeEnemyPosx();
 extern float moveEnemy(Global&);
 extern float RandomizeEnemyPosx();
@@ -70,6 +69,8 @@ extern void makeSoundTest();
 extern void makeReloadSound();        //marcelF
 extern void renderMagazineCount();    //marcelF
 extern void renderGameTime();         //marcelF
+extern void physicsSpawnEnemy();
+extern void physicsEnemyMoving();
 extern Global g;                      //marcelF
 extern Timers timers;                 //marcelF
 extern bool inGame;                   //marcelF
@@ -141,7 +142,7 @@ class X11_wrapper {
 	void setTitle() {
 	    //Set the window title bar.
 	    XMapWindow(dpy, win);
-	    XStoreName(dpy, win, "Walk Cycle");
+	    XStoreName(dpy, win, "Manhattan Shooter - Civilian Mode");
 	}
 	void setupScreenRes(const int w, const int h) {
 	    g.xres = w;
@@ -502,7 +503,7 @@ int checkKeys(XEvent *e)
       }
 		break;
       case XK_r:
-        g.magazine = 7;
+        g.magazine = magazine_capacity;
         makeReloadSound();
   		break;
 	    case XK_w:
@@ -579,7 +580,7 @@ extern void UpdateBulletpos(Bullet*, Global&, Timers&);
 void physics(void)
 {
     Bullet *b = NULL;
-    if (g.walk) {
+    if (inGame) {
 	//man is walking...
 	//when time is up, advance the frame.
 	timers.recordTime(&timers.timeCurrent);
@@ -603,15 +604,12 @@ void physics(void)
 	UpdateBulletpos(b,g,timers);
 	moveEnemy(g);
 	EnemyLoop(g);
-	spawnEnemy(g,0.9,2.0);
-
+        physicsSpawnEnemy();
+        physicsEnemyMoving();
+        
 	g.xc[0] += 0.001;
 	g.xc[1] += 0.001;
-	if ( (g.xres == g.eyres) ||  (g.yres == g.exres))
-	{
-		cout << "Hit Enemy " << endl;
-	}
-
+      
 	for (int i=0; i<20; i++) {
 	    g.box[i][0] -= 2.0 * (0.05 / g.delay);
 	    if (g.box[i][0] < -10.0)
@@ -737,84 +735,14 @@ void render(void)
         glEnd();
         */
 
-
-	//for(int i = 0; i < 5; i++) {
-	for(int i = 0; i < 16; i++) {
-
-        //srand((unsigned int)time(NULL));
-	//float res =  ( ((float)rand()/(float)(RAND_MAX)) * .10)+ 0.9;
-	spawnEnemy(g,0.9,2.0);
-	//if(g.exres < 0.0)
-	spawnEnemy(g,0.7,3.5);
-        //if(g.exres < 0.0)
-	spawnEnemy(g,0.6,6.5);
-	//if(g.exres < 0.0)
-	spawnEnemy(g,0.5,12.5);
-
-	spawnEnemy(g,0.9,14.5);
-        ////////////////////////
-
-  spawnEnemy(g,0.9,3.0);
-	//if(g.exres < 0.0)
-	spawnEnemy(g,0.7,4.5);
-        //if(g.exres < 0.0)
-	spawnEnemy(g,0.6,2.5);
-	//if(g.exres < 0.0)
-	spawnEnemy(g,0.5,14.5);
-
-	spawnEnemy(g,0.9,14.5);
-        /////////////////////////////
-        //spawnEnemy(g,res,3.0);
-	//if(g.exres < 0.0)
-	//spawnEnemy(g,res,4.5);
-        //if(g.exres < 0.0)
-	//spawnEnemy(g,res,2.5);
-	//if(g.exres < 0.0)
-	//spawnEnemy(g,res,14.5);
-
-	//spawnEnemy(g,res,14.5);
-
-
-     //srand((unsigned int)time(NULL));
-
-    //float a = 16.0;
-    //for (int i=0;i<20;i++)
-    //float res =  ( ((float)rand()/(float)(RAND_MAX)) * i)+ 2.0;
-    //return res;
-
-	//spawnEnemy(g,0.9,i);
-	//if(g.exres < 0.0)
-	//spawnEnemy(g,0.7,i);
-        //if(g.exres < 0.0)
-	//spawnEnemy(g,0.6,i);
-	//if(g.exres < 0.0)
-	//spawnEnemy(g,0.5,i);
-
-	//spawnEnemy(g,0.9,i);
-}
-	//if(g.exres == 0.0)
-	//spawnEnemy(g,0.9,14.5);
-
-	//spawnEnemy(g,0.9,res4);
-	//
-	/*
-	spawnEnemy(g,0.9,res+2.0);
-	spawnEnemy(g,0.9,res1+2.0);
-        spawnEnemy(g,0.9,res2+2.0);
-	spawnEnemy(g,0.9,res3+2.0);
-	spawnEnemy(g,0.9,res4+2.0);
-	*/
-        /*
-	spawnEnemy(g,0.9,res+3.5);
-	spawnEnemy(g,0.9,res1+3.5);
-        spawnEnemy(g,0.9,res2+3.5);
-	spawnEnemy(g,0.9,res3+3.5);
-	spawnEnemy(g,0.9,res4+3.5);
-	*/
-	//DrawBullets
-	//extern void Drawbullets(Bullet*, Global&);
-	Bullet * b = NULL;
-	Drawbullets(b,g);
+        
+        extern void drawEnemy(Enemy& enemy, Global& g);
+        for(unsigned int i = 0; i < g.enemies.size(); i++) {
+            drawEnemy(*g.enemies[i], g);
+        }
+        
+	Drawbullets(g);
+        
 
   renderGameTime();
   renderMagazineCount();
@@ -828,11 +756,13 @@ void render(void)
 	//ggprint8b(&r, 16, c, "W   Walk cycle");
 	ggprint8b(&r, 16, c, "+   faster");
 	ggprint8b(&r, 16, c, "-   slower");
-	ggprint8b(&r, 16, c, "right arrow -> walk right");
-	ggprint8b(&r, 16, c, "left arrow  <- walk left");
-	//ggprint8b(&r, 16, c, "frame: %i", g.walkFrame);
-	ggprint8b(&r, 16, c, "Time left: ");
-	ggprint8b(&r, 16, c, "Targets Eliminated: ");
+	ggprint8b(&r, 16, c, "right arrow: walk right");
+	ggprint8b(&r, 16, c, "left arrow: walk left");
+	ggprint8b(&r, 16, c, "up arrow: walk right");
+	ggprint8b(&r, 16, c, "down arrow: walk left");
+        ggprint8b(&r, 16, c, "shoot: a");
+	ggprint8b(&r, 16, c, "reload: r");
+	//ggprint8b(&r, 16, c, "Targets Eliminated: ");
 
 	//Names of Group members lab5
 	//extern void displayTimeFunc(int x, int y, double (&x)(double));

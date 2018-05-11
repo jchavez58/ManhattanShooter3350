@@ -43,40 +43,13 @@ void EnemyLoop(Global &g)
 
 }
 
-void spawnEnemy(Global&g, const float posx, const float posy)
+void drawEnemy(Enemy& enemy, Global& g)
 {
     tl.recordTime(&tl.timeCurrent);
-    double totalTime = tl.timeDiff(&tl.walkTime, &tl.timeCurrent);
-    double time = 1.5 - totalTime;
-    int minutes = time / 60.0;
-    int seconds = time / 60 * 60.0;
-    int ms = (time/ 60*60 - seconds) * 100;
-    unsigned int color = 0x00ffffff;
-    Rect r;
-    r.bot = 2000;
-    r.left = 10000;
-    r.center = 0;
-    char buffer[256];
-    sprintf(buffer, "%d:%02d:%2d", minutes, seconds, ms);
-    ggprint16(&r, 16, color, buffer);
-
-    flip = false;
-    int cx = g.exres/posx;
-    int cy = g.eyres/posy;
-    //g.centerx = cx;
-    //g.centery = cy;
-
-    extern void drawBox(int,int,int,int, Global&);
-    drawBox(posx,posy,cx,cy,g);
-
-    for (int i = 0; i < g.nbullets; i++) {
-        if (g.barr[i].pos[0] > (float)g.centerx-10 && g.barr[i].pos[0] < (float)g.centerx+10 &&
-            g.barr[i].pos[1] > (float)g.centery-30 && g.barr[i].pos[1] < (float)g.centery+30) {
-          //cout << "bullet hit enemy" << endl;
-          glDisable(GL_TEXTURE_2D);
-          break;
-        }
-    }
+    //double totalTime = tl.timeDiff(&enemy.time, &tl.timeCurrent);
+    
+    int cx = enemy.pos[0];
+    int cy = enemy.pos[1];
 
     float h = 30.0;
     float w = h * 0.5; //0.5 h = 50.0
@@ -99,15 +72,9 @@ void spawnEnemy(Global&g, const float posx, const float posy)
     glTexCoord2f(tx,      ty+1.0); glVertex2i(cx+w, cy-h);
     glTexCoord2f(tx,      ty);    glVertex2i(cx+w, cy+h);
     glTexCoord2f(tx+.240, ty);    glVertex2i(cx-w, cy+h);
-    glTexCoord2f(tx+.240, ty+1.0); glVertex2i(cx-w, cy-h); //cy-h;
+    glTexCoord2f(tx+.240, ty+1.0); glVertex2i(cx-w, cy-h);
 
     glEnd();
-
-    /* glTexCoord2f(0.0f, 1.0f); glVertex2i(-50, -50);
-       glTexCoord2f(0.0f, 0.0f);    glVertex2i(-50, 50);
-       glTexCoord2f(1.0f, 0.0f);    glVertex2i(50, 50);
-       glTexCoord2f(1.0f, 1.0f); glVertex2i(50, -50);
-       */
     glPopMatrix();
 
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -159,17 +126,19 @@ void moveBack(Global &g)
     //update center
     g.centerx -= 100;
 }
-
 void ShootBullets(Global &g, Bullet *b, Timers & h)
 {
+
+    //a lets(Global &g, Bullet *b, Timers & h)
+
 
     //a little time between each bullet
     struct timespec bt;
     clock_gettime(CLOCK_REALTIME, &bt);
     double ts = h.timeDiff(&g.bulletTimer, &bt);
-    if (ts > 0.1) {
+    if (ts > 0.01) {
 	h.timeCopy(&g.bulletTimer, &bt);
-	if (g.nbullets < 20) {
+	if (g.nbullets < max_bullets) {
 	    //shoot a bullet...
 	    //Bullet *b = new Bullet;
 	    b = &g.barr[g.nbullets];
@@ -196,19 +165,12 @@ void ShootBullets(Global &g, Bullet *b, Timers & h)
 	    g.nbullets++;
 	}
     }
-    cout << "Center x: " << g.centerx << endl;
-    cout << "Center y: " << g.centery << endl;
-    cout << "x: " << g.xres << endl;
-    cout << "y: " << g.yres << endl;
 }
 
 
-
-
-void Drawbullets(Bullet *b, Global &g)
+void Drawbullets(Global &g)
 {
-
-    b = &g.barr[0];
+    Bullet* b = g.barr;
     for (int i=0; i<g.nbullets; i++) {
 	//Log("draw bullet...\n");
 	glColor3f(1.0, 1.0, 1.0);
@@ -229,20 +191,20 @@ void Drawbullets(Bullet *b, Global &g)
 
 }
 
-void UpdateBulletpos(Bullet *b, Global &a, Timers &g)
+void UpdateBulletpos(Bullet *b, Global &g, Timers &t)
 {
     struct timespec bt;
     clock_gettime(CLOCK_REALTIME, &bt);
     int i=0;
-    while (i < a.nbullets) {
-	b = &a.barr[i];
+    while (i < g.nbullets) {
+	b = &g.barr[i];
 	//How long has bullet been alive?
-	double ts = g.timeDiff(&b->time, &bt);
+	double ts = t.timeDiff(&b->time, &bt);
 	if (ts > 2.5) {
 	    //time to delete the bullet.
-	    memcpy(&a.barr[i], &a.barr[a.nbullets-1],
+	    memcpy(&g.barr[i], &g.barr[g.nbullets-1],
 		    sizeof(Bullet));
-	    a.nbullets--;
+	    g.nbullets--;
 	    //do not increment i.
 	    continue;
 	}
@@ -252,19 +214,8 @@ void UpdateBulletpos(Bullet *b, Global &a, Timers &g)
 
 	//Check for collision with window edges
 
-	   /*if (b->pos[0] < 0.0) {
-	   b->pos[0] += (float)a.xres;
-	   }
-	   else if (b->pos[0] > (float)a.exres) {
-	   b->pos[0] -= (float)a.xres;
-	   }
-	   else if (b->pos[1] < 0.0) {
-	   b->pos[1] += (float)a.yres;
-	   }
-	   else if (b->pos[1] > (float)a.yres) {
-	   b->pos[1] -= (float)a.yres;
-	   }
-	   */
+        extern void calculateCollisionOfBullet(Bullet *b, Global& g, Timers&t);
+        calculateCollisionOfBullet(b, g, t);
 	i++;
     }
 

@@ -11,6 +11,8 @@
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
+#include <vector>
+
 using namespace std;
 
 typedef double Flt;
@@ -27,6 +29,7 @@ typedef Flt     Matrix[4][4];
 //constants
 const float timeslice = 1.0f;
 const float gravity = -0.2f;
+
 
 class Image {
     public:
@@ -114,6 +117,11 @@ class Bullet {
 	Bullet() { }
 };
 
+class Enemy : public Bullet {
+    
+};
+
+
 /*doubly linked list for enemies
 class Enemy {
   public:
@@ -148,10 +156,15 @@ class Enemy {
 };
 */
 
+
+const int game_duration = 60; // seconds
+const int magazine_capacity = 33; // rounds
+const int max_bullets = 200;
+
 class Global {
     public:
   //Enemy *ehead; //dirkD
-  int nenemies; //dirkD
+  std::vector<Enemy*> enemies;
   int done;
 	int xres, yres;
 	int gxres, gyres;
@@ -210,14 +223,14 @@ class Global {
 	    walkFrame=0;
 	    eneFrame=0;
 	    delay = 0.1;
-	    barr = new Bullet[20];
+	    barr = new Bullet[max_bullets];
 	    nbullets = 0;
 	    pos[0] = xres;
 	    pos[1] = yres;
 	    pos[2] = 0.0f;
 	    vel[0] = xres;
 	    vel[1] = yres;
-      magazine = 7;
+            magazine = magazine_capacity;
 	    for (int i=0; i<20; i++) {
 		box[i][0] = rnd() * xres;
 		box[i][1] = rnd() * (yres-220) + 220.0;
@@ -248,5 +261,3 @@ class Global {
     delete [] barr;
   }
 };
-
-const int game_duration = 60; // seconds

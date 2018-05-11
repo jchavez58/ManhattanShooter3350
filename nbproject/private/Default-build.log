@@ -1,0 +1,33 @@
+g++ -I ./include -D ENABLE_AUDIO omarG.cpp dirkD.cpp marcelF.cpp manhattan-shooter.cpp amirB.cpp Sprite.cpp game.h libggfonts.a -Wall -Wextra -lrt -lX11 -lGLU -lGL -pthread -lm	-D USE_OPENAL_SOUND /usr/lib/x86_64-linux-gnu/libopenal.so /usr/lib/x86_64-linux-gnu/libalut.so -o manhattan-shooter
+omarG.cpp: In function ‘void UpdateBulletpos(Bullet*, Global&, Timers&)’:
+omarG.cpp:255:43: error: variable or field ‘calculateCollisionOfBullet’ declared void
+    extern void calculateCollisionOfBullet(bullet *b, Global& a, Timers&g);
+                                           ^~~~~~
+omarG.cpp:255:43: error: ‘bullet’ was not declared in this scope
+omarG.cpp:255:60: error: expected primary-expression before ‘&’ token
+    extern void calculateCollisionOfBullet(bullet *b, Global& a, Timers&g);
+                                                            ^
+omarG.cpp:255:71: error: expected primary-expression before ‘&’ token
+    extern void calculateCollisionOfBullet(bullet *b, Global& a, Timers&g);
+                                                                       ^
+omarG.cpp:256:41: error: ‘calculateCollisionOfBullet’ was not declared in this scope
+       calculateCollisionOfBullet(b, a, g);
+                                         ^
+marcelF.cpp:89:33: error: variable or field ‘calculateCollisionOfBullet’ declared void
+ void calculateCollisionOfBullet(bullet *b, Global& a, Timers&g)
+                                 ^~~~~~
+marcelF.cpp:89:33: error: ‘bullet’ was not declared in this scope
+marcelF.cpp:89:41: error: ‘b’ was not declared in this scope
+ void calculateCollisionOfBullet(bullet *b, Global& a, Timers&g)
+                                         ^
+marcelF.cpp:89:50: error: expected primary-expression before ‘&’ token
+ void calculateCollisionOfBullet(bullet *b, Global& a, Timers&g)
+                                                  ^
+marcelF.cpp:89:52: error: ‘a’ was not declared in this scope
+ void calculateCollisionOfBullet(bullet *b, Global& a, Timers&g)
+                                                    ^
+marcelF.cpp:89:61: error: expected primary-expression before ‘&’ token
+ void calculateCollisionOfBullet(bullet *b, Global& a, Timers&g)
+                                                             ^
+Makefile:9: recipe for target 'manhattan-shooter' failed
+make: *** [manhattan-shooter] Error 1

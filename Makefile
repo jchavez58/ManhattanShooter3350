@@ -1,4 +1,4 @@
-CFLAGS = -I ./include -D ENABLE_AUDIO
+CFLAGS = -g -I ./include -D ENABLE_AUDIO
 LFLAGS = -lrt -lX11 -lGLU -lGL -pthread -lm	-D USE_OPENAL_SOUND \
   	/usr/lib/x86_64-linux-gnu/libopenal.so \
   	/usr/lib/x86_64-linux-gnu/libalut.so
