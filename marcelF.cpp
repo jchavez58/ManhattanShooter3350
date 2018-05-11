@@ -108,13 +108,13 @@ void physicsSpawnEnemy() {
     double elapsed = timers.timeDiff(&timers.gameTime, &timers.timeCurrent);
     float roll = ((float)rand() / RAND_MAX);
     float rollY= ((float)rand() / RAND_MAX);
-    //float rollVelocityX = ((float)rand() / RAND_MAX);
+    float rollVelocityX = ((float)rand() / RAND_MAX);
     float probabilityOfSpawning = 0.008 + (elapsed / game_duration) * .25;
     if(roll < probabilityOfSpawning) {
         Enemy* en = new Enemy();
         en->pos[0] = g.pos[0] + g.gxres + 100;
         en->pos[1] = 25 + rollY * 300;
-        en->vel[0] = -5; //- rollVelocityX * 12.5 + 5;
+        en->vel[0] = -5 - rollVelocityX * 12.5 + 5;
         g.enemies.push_back(en);
     }
 }
