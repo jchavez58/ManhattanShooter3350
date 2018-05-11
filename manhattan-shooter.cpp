@@ -52,6 +52,9 @@ extern void EnemyLoop(Global&);
 extern float RandomizeEnemyPosx();
 extern float moveEnemy(Global&);
 extern float RandomizeEnemyPosx();
+extern void renderHero(Global&, int, int);
+extern void renderGround(Global&);
+extern void renderBackground(Global&); 
 float res= RandomizeEnemyPosx();
 float res1= RandomizeEnemyPosx();
 float res2= RandomizeEnemyPosx();
@@ -286,20 +289,20 @@ void initOpengl(void)
     //silhouette
     //this is similar to a sprite graphic
     //
-/*
-glBindTexture(GL_TEXTURE_2D, g.backTexture);
-        unsigned char *backData = buildAlphaData(&img[7]);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
-		GL_RGBA, GL_UNSIGNED_BYTE, backData);
+    /*
+       glBindTexture(GL_TEXTURE_2D, g.backTexture);
+       unsigned char *backData = buildAlphaData(&img[7]);
+       glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+       glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+       GL_RGBA, GL_UNSIGNED_BYTE, backData);
 
-     g.xc[0] = 0.0;
-     g.xc[1] = 0.25;
-     g.yc[0] = 0.0;
-     g.yc[1] = 1.0;
+       g.xc[0] = 0.0;
+       g.xc[1] = 0.25;
+       g.yc[0] = 0.0;
+       g.yc[1] = 1.0;
 
-  */
+*/
 
 
     glBindTexture(GL_TEXTURE_2D, g.walkTexture);
@@ -325,8 +328,8 @@ glBindTexture(GL_TEXTURE_2D, g.backTexture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
 	    GL_RGBA, GL_UNSIGNED_BYTE, alienData);
 
-/*
-    glBindTexture(GL_TEXTURE_2D, e.alienTexture);
+    /*
+       glBindTexture(GL_TEXTURE_2D, e.alienTexture);
     //
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
@@ -334,8 +337,8 @@ glBindTexture(GL_TEXTURE_2D, g.backTexture);
     //must build a new set of data...
     unsigned char *alienData2 = buildAlphaData(&img[6]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
-      GL_RGBA, GL_UNSIGNED_BYTE, alienData2);
-*/
+    GL_RGBA, GL_UNSIGNED_BYTE, alienData2);
+    */
 
 
 
@@ -383,20 +386,20 @@ glBindTexture(GL_TEXTURE_2D, g.backTexture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
 	    GL_RGBA, GL_UNSIGNED_BYTE, pointerData);
 
- 	w = img[7].width;
-	h = img[7].height;
+    w = img[7].width;
+    h = img[7].height;
 
-	glBindTexture(GL_TEXTURE_2D, g.backTexture);
-        unsigned char *backData = buildAlphaData(&img[7]);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
-		GL_RGBA, GL_UNSIGNED_BYTE, backData);
+    glBindTexture(GL_TEXTURE_2D, g.backTexture);
+    unsigned char *backData = buildAlphaData(&img[7]);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+	    GL_RGBA, GL_UNSIGNED_BYTE, backData);
 
-     g.xc[0] = 0.0;
-     g.xc[1] = 0.25;
-     g.yc[0] = 0.0;
-     g.yc[1] = 1.0;
+    g.xc[0] = 0.0;
+    g.xc[1] = 0.25;
+    g.yc[0] = 0.0;
+    g.yc[1] = 1.0;
 
     //free(walkData);
     //unlink("./images/walk.ppm");
@@ -458,8 +461,8 @@ int checkKeys(XEvent *e)
 	    if (menuPosition == 1) {
 		inMainMenu = false;
 		inGame = true;
-        // Start game timer
-        timers.recordTime(&timers.gameTime);
+		// Start game timer
+		timers.recordTime(&timers.gameTime);
 	    } else if (menuPosition == 2) {
 		inMainMenu = false;
 		inTutorial = true;
@@ -496,16 +499,16 @@ int checkKeys(XEvent *e)
 	switch (key) {
 	    case XK_a:
 		//for(int i =0; i < 300 ; i++)
-    makeSoundTest();
-    if(g.magazine >= 1) {
-      ShootBullets(g,b,timers);
-      --g.magazine;
-      }
+		makeSoundTest();
+		if(g.magazine >= 1) {
+		    ShootBullets(g,b,timers);
+		    --g.magazine;
+		}
 		break;
-      case XK_r:
-        g.magazine = magazine_capacity;
-        makeReloadSound();
-  		break;
+	    case XK_r:
+		g.magazine = magazine_capacity;
+		makeReloadSound();
+		break;
 	    case XK_w:
 		timers.recordTime(&timers.walkTime);
 		g.walk ^= 1;
@@ -541,8 +544,8 @@ int checkKeys(XEvent *e)
 		g.delay -= 0.005;
 		if (g.delay < 0.005)
 		    g.delay = 0.005;
-	//g.xc[0] = 7000.0;
-	//g.xc[1] = 7000.0;
+		//g.xc[0] = 7000.0;
+		//g.xc[1] = 7000.0;
 
 		break;
 	    case XK_minus:
@@ -604,8 +607,8 @@ void physics(void)
 	UpdateBulletpos(b,g,timers);
 	moveEnemy(g);
 	EnemyLoop(g);
-        physicsSpawnEnemy();
-        physicsEnemyMoving();
+	physicsSpawnEnemy();
+	physicsEnemyMoving();
 
 	g.xc[0] += 0.001;
 	g.xc[1] += 0.001;
@@ -637,115 +640,28 @@ void render(void)
     } else if (inCredits) {
 	renderCredits(g.menuxres, g.menuyres, g.creditsTexture);
     } else if (inGame) {
-	//
-	//show ground
-	glBegin(GL_QUADS);
-	glColor3f(0.2, 0.2, 0.2);
-	glVertex2i(0,       280);
-	glVertex2i(g.gxres, 280);
-	glColor3f(0.4, 0.4, 0.4);
-	glVertex2i(g.gxres,   0);
-	glVertex2i(0,         0);
-	glEnd();
-	//
-	//fake shadow
-	//glColor3f(0.25, 0.25, 0.25);
-	//glBegin(GL_QUADS);
-	//	glVertex2i(cx-60, 150);
-	//	glVertex2i(cx+50, 150);
-	//	glVertex2i(cx+50, 130);
-	//	glVertex2i(cx-60, 130);
-	//glEnd();
-	//
 
-	//show boxes as background
+	//street
+	renderGround(g);
 
-	//for (int i=0; i<20; i++) {
-	    /*
-	    glPushMatrix();
-	    glTranslated(g.box[i][0],g.box[i][1],g.box[i][2]);
-	    glColor3f(0.0, 0.1, 0.0);
-	    glBegin(GL_QUADS);
-	    glVertex2i( 0,  0);
-	    glVertex2i( 0, 30);
-	    glVertex2i(20, 30);
-	    glVertex2i(20,  0);
-	    glEnd();
-	    glPopMatrix();
-	*/
-        //glClear(GL_COLOR_BUFFER_BIT);
-        glColor3f(1.0, 1.0, 1.0);
-
-	glBindTexture(GL_TEXTURE_2D, g.backTexture);
-        glBegin(GL_QUADS);
-              	glTexCoord2f(g.xc[0], g.yc[1]); glVertex2i(0, 280);
-           	glTexCoord2f(g.xc[0], g.yc[0]); glVertex2i(0, g.byres);
-          	glTexCoord2f(g.xc[1], g.yc[0]); glVertex2i(g.bxres, g.byres);
-        	glTexCoord2f(g.xc[1], g.yc[1]); glVertex2i(g.bxres, 280);
-        glEnd();
-
+	//background
+	renderBackground(g);
 
 	//walk frame.
-	float h = 30.0;
-	float w = h * 0.5; //0.5 h = 50.0
-	glPushMatrix();
-	glColor3f(1.0, 1.0, 1.0);
-	glBindTexture(GL_TEXTURE_2D, g.walkTexture);
-
-	glEnable(GL_ALPHA_TEST);
-	glAlphaFunc(GL_GREATER, 0.0f);
-	glColor4ub(255,255,255,255);
-	int ix = g.walkFrame % 4;
-	int iy = 0;
-	if (g.walkFrame >= 4)
-	    iy = 1;
-	float tx = (float)ix / 4.0;
-	float ty = (float)iy / 1.0;
-  glColor3f(1.0, 1.0, 1.0);
-  glBegin(GL_QUADS);
-  glTexCoord2f(tx,      ty+1.0); glVertex2i(flip ? cx+w: cx-w, cy-h);
-	glTexCoord2f(tx,      ty);    glVertex2i(flip ? cx+w: cx-w, cy+h);
-	glTexCoord2f(tx+.240, ty);    glVertex2i(flip ? cx-w: cx+w, cy+h);
-	glTexCoord2f(tx+.240, ty+1.0); glVertex2i(flip ? cx-w: cx+w, cy-h); //cy-h;
-
-	glEnd();
-	glPopMatrix();
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glDisable(GL_ALPHA_TEST);
-	//
-       // glEnd();
-	//glPopMatrix();
-	//glBindTexture(GL_TEXTURE_2D, 0);
-	//glDisable(GL_ALPHA_TEST);
-
-	//glPushMatrix();
-	//glColor3f(1.0, 1.0, 1.0);
-	//glBindTexture(GL_TEXTURE_2D, g.alienTexture);
-
-	//glEnable(GL_ALPHA_TEST);
-	//glAlphaFunc(GL_GREATER, 0.0f);
-	//glColor4ub(255,255,255,255);
-	/*
-	glBindTexture(GL_TEXTURE_2D, g.backTexture);
-        glBegin(GL_QUADS);
-                glTexCoord2f(g.xc[0], g.yc[1]); glVertex2i(0, 300);
-                glTexCoord2f(g.xc[0], g.yc[0]); glVertex2i(0, g.byres);
-                glTexCoord2f(g.xc[1], g.yc[0]); glVertex2i(g.bxres, g.byres);
-                glTexCoord2f(g.xc[1], g.yc[1]); glVertex2i(g.bxres, 300);
-        glEnd();
-        */
+	renderHero(g, cx, cy);
 
 
-        extern void drawEnemy(Enemy& enemy, Global& g);
-        for(unsigned int i = 0; i < g.enemies.size(); i++) {
-            drawEnemy(*g.enemies[i], g);
-        }
+
+	extern void drawEnemy(Enemy& enemy, Global& g);
+	for(unsigned int i = 0; i < g.enemies.size(); i++) {
+	    drawEnemy(*g.enemies[i], g);
+	}
 
 	Drawbullets(g);
 
 
-  renderGameTime();
-  renderMagazineCount();
+	renderGameTime();
+	renderMagazineCount();
 	// Menu
 
 	int topright = 600;
@@ -760,41 +676,12 @@ void render(void)
 	ggprint8b(&r, 16, c, "left arrow: walk left");
 	ggprint8b(&r, 16, c, "up arrow: walk right");
 	ggprint8b(&r, 16, c, "down arrow: walk left");
-        ggprint8b(&r, 16, c, "shoot: a");
+	ggprint8b(&r, 16, c, "shoot: a");
 	ggprint8b(&r, 16, c, "reload: r");
 	//ggprint8b(&r, 16, c, "Targets Eliminated: ");
 
 	//Names of Group members lab5
 	//extern void displayTimeFunc(int x, int y, double (&x)(double));
 	extern void displayGameName(int x, int y, const char* name);
-	/*extern void displayName (const char* name,int x , int y);
-	  extern void displayName(int x, int y, float r, float g, float b, const char *text);
-	  displayName(200, 200, 256, 0, 0, "Dirk Duclos");
-	  displayName("Omar Gonzalez", 100, 100);
-	  displayGameName(300, 50, "Marcel Furdui");
-	//displayTimeFunc(300, 50, &calc());
-	*/
-
-	// Dirk Duclos
-	//Function to draw box for colission detection
-	//extern void drawShape(int, int);
-
-
-	//drawShape(cx+200, cy+150);
-	//setBackground();
-
-	//Omar Gonzalez
-	//Profiling Function
-	//First test
-	/*draw();
-	//Optimized Fuinction
-	draw2();
-	*/
-	//Amir
-	/*TimeFunc();
-
-	  extern void timeCount();
-	  timeCount();
-	  */
     }
 }

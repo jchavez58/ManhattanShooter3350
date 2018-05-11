@@ -64,7 +64,7 @@ void drawEnemy(Enemy& enemy, Global& g)
     int ix = g.walkFrame % 4;
     int iy = 0;
     if (g.walkFrame >= 4)
-	    iy = 1;
+	iy = 1;
     float tx = (float)ix / 4.0;
     float ty = (float)iy / 1.0;
     glBegin(GL_QUADS);
@@ -214,8 +214,8 @@ void UpdateBulletpos(Bullet *b, Global &g, Timers &t)
 
 	//Check for collision with window edges
 
-        extern void calculateCollisionOfBullet(Bullet *b, Global& g);
-        calculateCollisionOfBullet(b, g);
+	extern void calculateCollisionOfBullet(Bullet *b, Global& g);
+	calculateCollisionOfBullet(b, g);
 	i++;
     }
 
@@ -312,4 +312,62 @@ void draw2()
     r.left = 250;
 
     ggprint16(&r, 16, 0x0ffff00, "Function Time 2 Omar Gonzalez: %f ", time);
+}
+void renderHero(Global &g, int cx, int cy)
+{
+    float h = 30.0;
+    float w = h * 0.5; //0.5 h = 50.0
+    glPushMatrix();
+    glColor3f(1.0, 1.0, 1.0);
+    glBindTexture(GL_TEXTURE_2D, g.walkTexture);
+
+    glEnable(GL_ALPHA_TEST);
+    glAlphaFunc(GL_GREATER, 0.0f);
+    glColor4ub(255,255,255,255);
+    int ix = g.walkFrame % 4;
+    int iy = 0;
+    if (g.walkFrame >= 4)
+	iy = 1;
+    float tx = (float)ix / 4.0;
+    float ty = (float)iy / 1.0;
+    glColor3f(1.0, 1.0, 1.0);
+    glBegin(GL_QUADS);
+    glTexCoord2f(tx,      ty+1.0); glVertex2i(flip ? cx+w: cx-w, cy-h);
+    glTexCoord2f(tx,      ty);    glVertex2i(flip ? cx+w: cx-w, cy+h);
+    glTexCoord2f(tx+.240, ty);    glVertex2i(flip ? cx-w: cx+w, cy+h);
+    glTexCoord2f(tx+.240, ty+1.0); glVertex2i(flip ? cx-w: cx+w, cy-h); //cy-h;
+
+    glEnd();
+    glPopMatrix();
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_ALPHA_TEST);
+
+
+}
+
+void renderBackground(Global &g)
+{
+    glColor3f(1.0, 1.0, 1.0);
+
+    glBindTexture(GL_TEXTURE_2D, g.backTexture);
+    glBegin(GL_QUADS);
+    glTexCoord2f(g.xc[0], g.yc[1]); glVertex2i(0, 280);
+    glTexCoord2f(g.xc[0], g.yc[0]); glVertex2i(0, g.byres);
+    glTexCoord2f(g.xc[1], g.yc[0]); glVertex2i(g.bxres, g.byres);
+    glTexCoord2f(g.xc[1], g.yc[1]); glVertex2i(g.bxres, 280);
+    glEnd();
+}
+
+void renderGround(Global &g)
+{
+    glBegin(GL_QUADS);
+    glColor3f(0.2, 0.2, 0.2);
+    glVertex2i(0,       280);
+    glVertex2i(g.gxres, 280);
+    glColor3f(0.4, 0.4, 0.4);
+    glVertex2i(g.gxres,   0);
+    glVertex2i(0,         0);
+    glEnd();
+
+
 }
