@@ -2,7 +2,7 @@
 /*
 
 Author: Dirk Duclos
-Last Modified: 5/8/18
+Last Modified: 5/10/18
 
 Tasks Assigned:
   1. Colission detection
@@ -37,16 +37,6 @@ typedef Flt	Matrix[4][4];
 #define ALPHA 1
 const float GRAVITY =  -0.2f;
 
-//extern void Destroy(character&);
-
-// make an object to check for colission
-struct Shape {
-  float width, height;
-	float radius;
-	Vec center;
-	struct timespec end;
-} s;
-
 //Check for character colission with window edges
 void detectCharWallColission(int posx, int posy, Global &g)
 {
@@ -79,30 +69,62 @@ void detectCharWallColission(int posx, int posy, Global &g)
     g.yres = 620;
     }
 }
-/*
-void detectBullEnemyColission(double bullx, double bully, int ex, int ey, Bullet *bu, Global &g)
+
+/*void deleteEnemy(Global *g, Enemy *node)
 {
+	//Remove a node from doubly-linked list.
+	//Must look at 4 special cases below.
+	if (node->prev == NULL) {
+		if (node->next == NULL) {
+			//only 1 item in list.
+			g->ehead = NULL;
+		} else {
+			//at beginning of list.
+			node->next->prev = NULL;
+			g->ehead = node->next;
+		}
+	} else {
+		if (node->next == NULL) {
+			//at end of list.
+			node->prev->next = NULL;
+		} else {
+			//in middle of list.
+			node->prev->next = node->next;
+			node->next->prev = node->prev;
+		}
+	}
+	delete node;
+	node = NULL;
+}
 
-    //if (bullx == ex && bully == ey)
-   // {
-     //  --g.nbullets;
-     //  g.exres = 11000;
-     //  g.eyres = 620;
- 
-//    }
-
+/*void detectBullEnemyColission(Bullet *b, Enemy *e, Global *g)
+{
+    //cout << "bullet pos x: " << (int)b->pos[0]+5 << endl;
+    //cout << "shape x: " << s.centerx << endl;
+           if (b->pos[0] > e->pos[0]) {
+           Enemy *savee = e->next;
+           deleteEnemy(g,e);
+           e = savee;
+           g->nenemies--;
+           }
+           if (e == NULL)
+       			exit(0);
+       		e = e->next;
 }
 */
-void drawBox(int x,int y, int posx, int posy, int posz)
+
+void drawLine(int x,int y, int posx, int posy, Global&g)
 {
-    glPushMatrix();
-    glTranslatef(posx, posy, posz);
-    glColor3f(0.0f, 0.0f, 1.0f); // Let it be blue
-    glBegin(GL_LINE_STRIP); // 2x2 pixels
-    glVertex2f(-x+250, -y+310);
-    glVertex2f(-x+250, y-310);
-    glVertex2f(x-250, y-310);
-    glVertex2f(x-250, -y+310);
-    glEnd();
-    glPopMatrix();
+  glPushMatrix();
+  glTranslatef(posx, posy, 0);
+  g.centerx = posx;
+  g.centery = posy;
+  g.enxres = x;
+  g.enyres = y;
+  glColor3f(1.0f, 0.0f, 0.0f); // Let it be blue
+  glBegin(GL_LINE_STRIP); // 2x2 pixels
+  glVertex2i(x-10, y+30);
+  glVertex2i(x-10, -y-30);
+  glEnd();
+  glPopMatrix();
 }
