@@ -37,17 +37,6 @@ typedef Flt	Matrix[4][4];
 #define ALPHA 1
 const float GRAVITY =  -0.2f;
 
-//extern void Destroy(character&);
-
-// make an object to check for colission
-struct Shape {
-  float width, height;
-	float radius;
-	int centerx;
-  int centery;
-	struct timespec end;
-} s;
-
 //Check for character colission with window edges
 void detectCharWallColission(int posx, int posy, Global &g)
 {
@@ -81,7 +70,7 @@ void detectCharWallColission(int posx, int posy, Global &g)
     }
 }
 
-void deleteEnemy(Global *g, Enemy *node)
+/*void deleteEnemy(Global *g, Enemy *node)
 {
 	//Remove a node from doubly-linked list.
 	//Must look at 4 special cases below.
@@ -123,19 +112,19 @@ void deleteEnemy(Global *g, Enemy *node)
        		e = e->next;
 }
 */
-/*void drawBox(int x,int y)
+
+void drawLine(int x,int y, int posx, int posy, Global&g)
 {
-  s.centerx = x;
-  s.centery = y;
   glPushMatrix();
-  glTranslatef(x, y, 0);
-  glColor3f(0.0f, 0.0f, 1.0f); // Let it be blue
+  glTranslatef(posx, posy, 0);
+  g.centerx = posx;
+  g.centery = posy;
+  g.enxres = x;
+  g.enyres = y;
+  glColor3f(1.0f, 0.0f, 0.0f); // Let it be blue
   glBegin(GL_LINE_STRIP); // 2x2 pixels
-  glVertex2f(-10, -10);
-  glVertex2f(-10, 10);
-  glVertex2f(10, 10);
-  glVertex2f(10, -10);
+  glVertex2i(x-10, y+30);
+  glVertex2i(x-10, -y-30);
   glEnd();
   glPopMatrix();
 }
-*/

@@ -597,8 +597,6 @@ void physics(void)
 		g.walkFrame -= 16;
 	    timers.recordTime(&timers.walkTime);
 
-
-
 	    //UpdateBulletpos(b,g);
 
 	}
@@ -606,43 +604,6 @@ void physics(void)
 	moveEnemy(g);
 	EnemyLoop(g);
 	spawnEnemy(g,0.9,2.0);
-
-//logic for bullet and enemy colission, Dirk D
-  Flt d0,d1,dist;
-	Enemy *e = g.ehead;
-  e = g.ehead;
-  while (e) {
-    //is there a bullet within its radius?
-    int i=0;
-    while (i < g.nbullets) {
-      Bullet *b = &g.barr[i];
-      d0 = b->pos[0] - e->pos[0];
-      d1 = b->pos[1] - e->pos[1];
-      dist = (d0 + d1);
-      cout << "distance: " << dist << endl;
-      if (dist < 40.000 && dist > -40.000) {
-          cout << "enemy hit" << endl;
-          //delete the enemy and bullet
-          Enemy *savee = e->next;
-          extern void deleteEnemy(Global*,Enemy*);
-          //not working for texture...just deletes node...how to get rid of texture
-          // attached to global?
-          deleteEnemy(&g, e);
-          e = savee;
-          g.nenemies--;
-          cout << "enemy #: " << g.nenemies << endl;
-        //delete the bullet...
-        memcpy(&g.barr[i], &g.barr[g.nbullets-1], sizeof(Bullet));
-        g.nbullets--;
-        if (e == NULL)
-          break;
-      }
-      i++;
-    }
-    if (e == NULL)
-      break;
-    e = e->next;
-   }
 
 	g.xc[0] += 0.001;
 	g.xc[1] += 0.001;
@@ -660,7 +621,6 @@ void physics(void)
 
     }
 }
-
 
 
 void render(void)
@@ -794,7 +754,7 @@ void render(void)
 	spawnEnemy(g,0.9,14.5);
         ////////////////////////
 
-        spawnEnemy(g,0.9,3.0);
+  spawnEnemy(g,0.9,3.0);
 	//if(g.exres < 0.0)
 	spawnEnemy(g,0.7,4.5);
         //if(g.exres < 0.0)
@@ -821,8 +781,6 @@ void render(void)
     //for (int i=0;i<20;i++)
     //float res =  ( ((float)rand()/(float)(RAND_MAX)) * i)+ 2.0;
     //return res;
-
-
 
 	//spawnEnemy(g,0.9,i);
 	//if(g.exres < 0.0)

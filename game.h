@@ -103,6 +103,7 @@ class Timers {
 	}
 };
 
+
 class Bullet {
     public:
 	Vec pos;
@@ -113,12 +114,18 @@ class Bullet {
 	Bullet() { }
 };
 
-//doubly linked list for enemies
+/*doubly linked list for enemies
 class Enemy {
   public:
+    int gxres;
+    int gyres;
+    int xres;
+    int yres;
     int exres;
     int eyres;
     int eneFrame;
+    int walk;
+    int walkFrame;
     Vec pos;
     Vec vel;
     GLuint alienTexture;
@@ -127,18 +134,28 @@ class Enemy {
 
   public:
     Enemy() {
+      walk = 0;
+      walkFrame = 0;
+      exres = 800;
+	    eyres = 600;
+      xres=800;
+	    yres=600;
+      gxres = 800;
+      gyres=  600;
       prev = NULL;
       next = NULL;
     };
 };
+*/
 
 class Global {
     public:
-  Enemy *ehead; //dirkD
+  //Enemy *ehead; //dirkD
   int nenemies; //dirkD
   int done;
 	int xres, yres;
 	int gxres, gyres;
+  int enxres, enyres;
 	int walk;
 	int walkFrame;
 	int eneFrame;
@@ -147,7 +164,7 @@ class Global {
 	int exres;
 	int eyres;
 	int menuxres;
-        int menuyres;
+  int menuyres;
 	int bxres;
 	int byres;
 	Vec pos;
@@ -172,11 +189,13 @@ class Global {
   int magazine;
 
 	Global() {
-      ehead = NULL;
-      nenemies = 0;
+      //ehead = NULL;
+      //nenemies = 0;
       done=0;
 	    xres=800;
 	    yres=600;
+      enxres = 0;
+      enyres = 0;
 	    gxres = 800;
 	    gyres=  600;
 	    exres = 800;
@@ -207,7 +226,7 @@ class Global {
 	    }
 
       //build 10 enemies...
-  		for (int j=0; j<10; j++) {
+  		/*for (int j=0; j<10; j++) {
   			Enemy *e = new Enemy;
   			//e->pos[0] = (Flt)(rand() % xres);
   			//e->pos[1] = (Flt)(rand() % yres);
@@ -221,11 +240,13 @@ class Global {
   				ehead->prev = e;
   			ehead = e;
   			++nenemies;
-      }
+      }*/
 	    clock_gettime(CLOCK_REALTIME, &bulletTimer);
 	    memset(keys,0, 65536);
 	}
-	~Global(){ delete [] barr;   }
+	~Global(){
+    delete [] barr;
+  }
 };
 
 const int game_duration = 60; // seconds

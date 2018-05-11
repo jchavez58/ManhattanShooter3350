@@ -43,8 +43,6 @@ void EnemyLoop(Global &g)
 
 }
 
-int i = 0;
-
 void spawnEnemy(Global&g, const float posx, const float posy)
 {
     tl.recordTime(&tl.timeCurrent);
@@ -65,18 +63,27 @@ void spawnEnemy(Global&g, const float posx, const float posy)
     flip = false;
     int cx = g.exres/posx;
     int cy = g.eyres/posy;
+    //g.centerx = cx;
+    //g.centery = cy;
+
+    extern void drawLine(int,int,int,int, Global&);
+    drawLine(posx,posy,cx,cy,g);
+
+    for (int i = 0; i < g.nbullets; i++) {
+        if (g.barr[i].pos[0] > (float)g.enxres) {
+          //cout << "bullet hit enemy" << endl;
+          glPushMatrix();
+          glBindTexture(GL_TEXTURE_2D, 0);
+          glPopMatrix();
+        }
+    }
 
     float h = 30.0;
     float w = h * 0.5; //0.5 h = 50.0
 
-  //make list of enemies for each alien texture made in global
-  Enemy *en = g.ehead;
-  while(en) {
     glPushMatrix();
     glColor3f(1.0, 1.0, 1.0);
     glBindTexture(GL_TEXTURE_2D, g.alienTexture);
-    en->pos[0] = cx;
-    en->pos[1] = cy;
 
     glEnable(GL_ALPHA_TEST);
     glAlphaFunc(GL_GREATER, 0.0f);
@@ -96,8 +103,6 @@ void spawnEnemy(Global&g, const float posx, const float posy)
 
     glEnd();
 
-
-
     /* glTexCoord2f(0.0f, 1.0f); glVertex2i(-50, -50);
        glTexCoord2f(0.0f, 0.0f);    glVertex2i(-50, 50);
        glTexCoord2f(1.0f, 0.0f);    glVertex2i(50, 50);
@@ -107,8 +112,7 @@ void spawnEnemy(Global&g, const float posx, const float posy)
 
     glBindTexture(GL_TEXTURE_2D, 0);
     glDisable(GL_ALPHA_TEST);
-    en = en->next;
-  }
+
 }
 
 float RandomizeEnemyPosx()
