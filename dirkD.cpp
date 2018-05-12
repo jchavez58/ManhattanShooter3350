@@ -113,8 +113,8 @@ void detectCharWallColission(int posx, int posy, Global &g)
 }
 
 /*
-This is object oriented approach to Colission
-deletes object from mem, as well as bullet
+This is vector oriented approach to Colission
+deletes vector pointer from mem, as well as bullet
 */
 void calculateCollisionOfBullet(Bullet* b, Global& g)
 {
@@ -146,7 +146,7 @@ void calculateCollisionOfBullet(Bullet* b, Global& g)
 
     if (!remove.empty() && g.nbullets) {
         int bulletIndex = b - g.barr;
-        //COpy the last bullet into the current bullet
+        //Copy the last bullet into the current bullet
         //and delete the last bullet
         g.barr[bulletIndex] = g.barr[g.nbullets-1];
         g.nbullets--;
