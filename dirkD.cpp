@@ -118,13 +118,13 @@ deletes vector pointer from mem, as well as bullet
 */
 void calculateCollisionOfBullet(Bullet* b, Global& g)
 {
-    std::vector<Enemy*> remove;
+    vector<Enemy*> remove;
     cout << "Enemies: " << g.enemies.size() << "\n";
     for (unsigned int i = 0; i < g.enemies.size(); i++) {
         Enemy& en = *g.enemies[i];
-        double diffX = (b->pos[0] - (en.pos[0] - 30/2.0));
-        double diffY = (b->pos[1] - (en.pos[1] - 15/2.0+4));
-        double dist = std::sqrt(diffX * diffX + diffY * diffY);
+        double diffX = (b->pos[0] - (en.pos[0] - 10));
+        double diffY = (b->pos[1] - (en.pos[1] + 15));
+        double dist = sqrt(diffX * diffX + diffY * diffY);
         if (dist < 15) { // experimentally tried value for enemy radius
             remove.push_back(&en);
             break; //one bullet one kill
@@ -134,7 +134,7 @@ void calculateCollisionOfBullet(Bullet* b, Global& g)
     for (unsigned int i = 0; i < remove.size(); i++) {
         delete remove[i];
         g.enemies.erase(
-            std::remove(
+          std::remove(
                 g.enemies.begin(),
                 g.enemies.end(),
                 remove[i]

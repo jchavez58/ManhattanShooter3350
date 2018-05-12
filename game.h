@@ -164,7 +164,7 @@ const int max_bullets = 200;
 class Global {
     public:
   //Enemy *ehead; //dirkD
-  std::vector<Enemy*> enemies;
+  vector<Enemy*> enemies;
   int done;
 	int xres, yres;
 	int gxres, gyres;
