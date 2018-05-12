@@ -44,10 +44,13 @@ const float GRAVITY =  -0.2f;
 extern Global g;
 extern Timers timers;
 
-//Extern functions
-extern void spawnEnemy(Global&,const float, const float);
-
-int killCounter = 0;
+//functions defs
+void spawnEnemy(Global&,const float, const float);
+void detectCharWallColission(int,int,Global&);
+void calculateCollisionOfBullet(Bullet*,Global&);
+bool detectBullEnemyColission(Global&);
+void drawBox(int,int,int,Global&);
+void EnemyWaves(Global&);
 
 //enemy health counters for each wave
 int health1 = 0;
@@ -73,6 +76,8 @@ bool hit8 = false;
 bool hit9 = false;
 bool hit10 = false;
 
+//kill counter
+int killCounter = 0;
 
 //Check for character colission with window edges
 void detectCharWallColission(int posx, int posy, Global &g)
@@ -234,8 +239,10 @@ void spawnEnemy(Global&g, const float posx, const float posy)
     glDisable(GL_ALPHA_TEST);
 }
 
-//function to spawn enemies to kill
-//This is rendering(graphical) approach to colission detection
+/*
+function to spawn enemies to kill
+This is rendering(graphical) approach to colission detection
+*/
 void EnemyWaves (Global &g) {
 
     if (health1 <=2 || health2 <=2 || health3 <=2 ||
